@@ -16,9 +16,9 @@
         <aside class="sidebar">
             <h2 style="color: white !important; border-bottom: 1px solid rgba(255,255,255,0.1);">TCMT Service</h2>
             <nav>
-                <a href="{% url 'index' %}">🧭 {% trans "Дашборд" %}</a>
-                <a href="{% url 'requests:list' %}">📋 {% trans "Заявки" %}</a>
-                <a href="{% url 'trips:list' %}">✈️ {% trans "Командировки" %}</a>
+                <a href="{% url 'index' %}">🧭 {% trans "Dashboard" %}</a>
+                <a href="{% url 'requests:list' %}">📋 {% trans "Requests" %}</a>
+                <a href="{% url 'trips:list' %}">✈️ {% trans "Trips" %}</a>
                 <hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">
                 <div style="padding: 10px; font-size: 0.9em; color: #adb5bd;">
                     👤 {{ user.username }} <br>
@@ -28,7 +28,7 @@
                     {% csrf_token %}
                     <button type="submit"
                         style="background: none; border: none; color: #ff6b6b; cursor: pointer; padding: 10px 15px; width: 100%; text-align: left; font-size: 1rem;">🚪
-                        {% trans "Выход" %}</button>
+                        {% trans "Logout" %}</button>
                 </form>
 
                 <hr style="border-color: rgba(255,255,255,0.2); margin: 15px 0;">

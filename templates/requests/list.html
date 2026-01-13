@@ -4,19 +4,19 @@
 {% block content %}
 <div class="glass-container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="color: white; margin: 0;">📋 {% trans "Список заявок" %}</h2>
+        <h2 style="color: white; margin: 0;">📋 {% trans "Requests List" %}</h2>
         {% if user.role != 'user' %}
         <div style="display: flex; gap: 10px;">
             <a href="{% url 'requests:import' %}" class="btn-primary"
                 style="text-decoration: none; background-color: #28a745; border-color: #28a745;">
-                📥 {% trans "Импорт" %}
+                📥 {% trans "Import" %}
             </a>
             <a href="{% url 'requests:export' %}" class="btn-primary"
                 style="text-decoration: none; background-color: #17a2b8; border-color: #17a2b8;">
-                📤 {% trans "Экспорт" %}
+                📤 {% trans "Export" %}
             </a>
             <a href="{% url 'requests:create' %}" class="btn-primary" style="text-decoration: none;">
-                + {% trans "Новая заявка" %}
+                + {% trans "New Request" %}
             </a>
         </div>
         {% endif %}
@@ -24,11 +24,11 @@
 
     <!-- Filters -->
     <form method="get" style="margin-bottom: 20px; display: flex; gap: 10px;">
-        <input type="text" name="q" placeholder="{% trans 'Поиск по номеру...' %}"
+        <input type="text" name="q" placeholder="{% trans 'Search by number...' %}"
             value="{{ request.GET.q|default:'' }}" style="width: 200px; margin: 0;">
 
         <select name="status" style="width: 200px; margin: 0;" onchange="this.form.submit()">
-            <option value="">{% trans "Все статусы" %}</option>
+            <option value="">{% trans "All Statuses" %}</option>
             {% for status in statuses %}
             <option value="{{ status.pk }}" {% if selected_status == status.pk %}selected{% endif %}>
                 {{ status.name }}
@@ -36,12 +36,12 @@
             {% endfor %}
         </select>
 
-        <button type="submit" class="btn-primary" style="padding: 5px 15px;">🔍 {% trans "Найти" %}</button>
+        <button type="submit" class="btn-primary" style="padding: 5px 15px;">🔍 {% trans "Search" %}</button>
 
         {% if request.GET.q or request.GET.status %}
         <a href="{% url 'requests:list' %}" class="btn-primary"
             style="background-color: #6c757d; border-color: #6c757d; text-decoration: none; padding: 6px 15px;">
-            {% trans "Сброс" %}
+            {% trans "Reset" %}
         </a>
         {% endif %}
     </form>
@@ -50,13 +50,13 @@
         <thead>
             <tr>
                 <th>№</th>
-                <th>{% trans "Номер заявки" %}</th>
-                <th>{% trans "Дата" %}</th>
-                <th>{% trans "Учреждение" %}</th>
-                <th>{% trans "Оборудование" %}</th>
-                <th>{% trans "Статус" %}</th>
-                <th>{% trans "Ответственный" %}</th>
-                <th>{% trans "Действия" %}</th>
+                <th>{% trans "Request Number" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Institution" %}</th>
+                <th>{% trans "Equipment" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th>{% trans "Responsible" %}</th>
+                <th>{% trans "Actions" %}</th>
             </tr>
         </thead>
         <tbody>
@@ -78,7 +78,12 @@
                         {{ req.status.name }}
                     </span>
                 </td>
-                <td>{{ req.responsible.full_name }}</td>
+                <td>
+                    {{ req.responsible.full_name }}<br>
+                    <span style="font-size: 0.8em;">
+                        {{ req.contact_phone }}
+                    </span>
+                </td>
                 <td>
                     {% if user.role == 'user' and req.status.name in closed_statuses %}
                     <span style="opacity: 0.3; margin-right: 10px;">🔒</span>
@@ -91,7 +96,7 @@
             {% empty %}
             <tr>
                 <td colspan="8" style="text-align: center; padding: 20px;">
-                    {% trans "Заявок пока нет" %}
+                    {% trans "No requests yet" %}
                 </td>
             </tr>
             {% endfor %}

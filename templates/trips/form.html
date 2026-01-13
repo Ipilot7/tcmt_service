@@ -5,9 +5,9 @@
 <div class="glass-container" style="max-width: 900px; margin: 0 auto;">
     <h2 style="color: black; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px;">
         {% if form.instance.pk %}
-        ✏️ {% trans "Командировка" %} {{ form.instance.request_number }}
+        ✏️ {% trans "Trip" %} {{ form.instance.request_number }}
         {% else %}
-        ➕ {% trans "Новая командировка" %}
+        ➕ {% trans "New Trip" %}
         {% endif %}
     </h2>
 
@@ -22,27 +22,27 @@
         {% endif %}
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <!-- Левая колонка -->
+            <!-- Left Column -->
             <div>
                 <h4 style="color: #6c757d; margin-bottom: 15px; border-bottom: 1px solid #dee2e6; padding-bottom: 5px;">
-                    {% trans "Основная информация" %}</h4>
+                    {% trans "General Information" %}</h4>
 
-                <label>{% trans "Регион" %}</label>
+                <label>{% trans "Region" %}</label>
                 {{ form.region }}
 
-                <label>{% trans "Учреждение" %}</label>
+                <label>{% trans "Institution" %}</label>
                 {{ form.institution }}
 
-                <label>{% trans "Тип оборудования" %}</label>
+                <label>{% trans "Equipment Type" %}</label>
                 {{ form.equipment_type }}
 
-                <label>{% trans "Контактный телефон (объекта)" %}</label>
+                <label>{% trans "Contact Phone (Object)" %}</label>
                 {{ form.contact_phone }}
 
-                <label>{% trans "Номер приказа" %}</label>
+                <label>{% trans "Order Number" %}</label>
                 {{ form.order_number }}
 
-                <label>{% trans "Дата" %}</label>
+                <label>{% trans "Date" %}</label>
                 {% if 'created_at' in form.fields %}
                 {{ form.created_at }}
                 {% else %}
@@ -51,35 +51,35 @@
                 {% endif %}
             </div>
 
-            <!-- Правая колонка -->
+            <!-- Right Column -->
             <div>
                 <h4 style="color: #6c757d; margin-bottom: 15px; border-bottom: 1px solid #dee2e6; padding-bottom: 5px;">
-                    {% trans "Детали выполнения" %}</h4>
+                    {% trans "Execution Details" %}</h4>
 
-                <label>{% trans "Ответственный сотрудник" %}</label>
+                <label>{% trans "Responsible Employee" %}</label>
                 {{ form.responsible }}
 
-                <label>{% trans "Статус" %}</label>
+                <label>{% trans "Status" %}</label>
                 {{ form.status }}
 
                 <h4 style="color: #6c757d; margin: 25px 0 15px; border-bottom: 1px solid #dee2e6; padding-bottom: 5px;">
-                    {% trans "Сопровождение" %}</h4>
+                    {% trans "Accompaniment" %}</h4>
 
-                <label>{% trans "ФИО сопровождающего" %}</label>
+                <label>{% trans "Escort Name" %}</label>
                 {{ form.escort_name }}
 
-                <label>{% trans "Телефон сопровождающего" %}</label>
+                <label>{% trans "Escort Phone" %}</label>
                 {{ form.escort_phone }}
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
             <div>
-                <label>{% trans "Причина командировки" %}</label>
+                <label>{% trans "Trip Reason" %}</label>
                 {{ form.description }}
             </div>
             <div>
-                <label>{% trans "Результат / Сведения о выполнении" %}</label>
+                <label>{% trans "Result / Execution Info" %}</label>
                 {{ form.result_info }}
             </div>
         </div>
@@ -87,9 +87,9 @@
         <div style="margin-top: 30px; text-align: right;">
             <a href="{% url 'trips:list' %}" class="btn-primary"
                 style="background-color: #6c757d; border-color: #6c757d; margin-right: 15px;">
-                {% trans "Отмена" %}
+                {% trans "Cancel" %}
             </a>
-            <button type="submit" class="btn-primary">{% trans "Сохранить" %}</button>
+            <button type="submit" class="btn-primary">{% trans "Save" %}</button>
         </div>
     </form>
 </div>

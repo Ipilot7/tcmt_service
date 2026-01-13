@@ -5,9 +5,9 @@
 <div class="glass-container" style="max-width: 800px; margin: 0 auto;">
     <h2 style="color: black; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px;">
         {% if form.instance.pk %}
-        {% trans "Редактирование заявки" %} {{ form.instance.request_number }}
+        {% trans "Edit Request" %} {{ form.instance.request_number }}
         {% else %}
-        {% trans "Новая заявка" %}
+        {% trans "New Request" %}
         {% endif %}
     </h2>
 
@@ -23,27 +23,27 @@
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div>
-                <label>{% trans "Регион" %}</label>
+                <label>{% trans "Region" %}</label>
                 {{ form.region }}
 
-                <label>{% trans "Учреждение" %}</label>
+                <label>{% trans "Institution" %}</label>
                 {{ form.institution }}
 
-                <label>{% trans "Тип оборудования" %}</label>
+                <label>{% trans "Equipment Type" %}</label>
                 {{ form.equipment_type }}
 
-                <label>{% trans "Контактный телефон" %}</label>
+                <label>{% trans "Contact Phone" %}</label>
                 {{ form.contact_phone }}
             </div>
 
             <div>
-                <label>{% trans "Ответственный" %}</label>
+                <label>{% trans "Responsible" %}</label>
                 {{ form.responsible }}
 
-                <label>{% trans "Статус" %}</label>
+                <label>{% trans "Status" %}</label>
                 {{ form.status }}
 
-                <label>{% trans "Дата" %}</label>
+                <label>{% trans "Date" %}</label>
                 {% if 'created_at' in form.fields %}
                 {{ form.created_at }}
                 {% else %}
@@ -53,16 +53,16 @@
         </div>
 
         <div style="margin-top: 10px;">
-            <label>{% trans "Описание проблемы" %}</label>
+            <label>{% trans "Problem Description" %}</label>
             {{ form.description }}
         </div>
 
         <div style="margin-top: 20px; text-align: right;">
             <a href="{% url 'requests:list' %}" class="btn-primary"
                 style="background-color: #6c757d; border-color: #6c757d; margin-right: 10px;">
-                {% trans "Отмена" %}
+                {% trans "Cancel" %}
             </a>
-            <button type="submit" class="btn-primary">{% trans "Сохранить" %}</button>
+            <button type="submit" class="btn-primary">{% trans "Save" %}</button>
         </div>
     </form>
 </div>

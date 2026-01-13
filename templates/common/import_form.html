@@ -4,11 +4,11 @@
 {% block content %}
 <div class="glass-container" style="max-width: 600px; margin: 0 auto;">
     <h2 style="color: white; margin-bottom: 20px;">
-        {% trans "Импорт данных из Excel" %}
+        {% trans "Import data from Excel" %}
     </h2>
 
     <p style="color: rgba(255,255,255,0.7); margin-bottom: 20px;">
-        {% trans "Выберите файл .xlsx для загрузки. Убедитесь, что формат колонок соответствует требованиям." %}
+        {% trans "Select an .xlsx file to upload. Ensure column format meets requirements." %}
     </p>
 
     <form method="post" enctype="multipart/form-data">
@@ -21,10 +21,10 @@
         <div style="text-align: right;">
             <a href="javascript:history.back()" class="btn-primary"
                 style="background-color: #6c757d; border-color: #6c757d; margin-right: 10px; text-decoration: none;">
-                {% trans "Отмена" %}
+                {% trans "Cancel" %}
             </a>
             <button type="submit" class="btn-primary">
-                {% trans "Загрузить" %}
+                {% trans "Upload" %}
             </button>
         </div>
     </form>

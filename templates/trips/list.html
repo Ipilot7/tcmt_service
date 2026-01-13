@@ -4,19 +4,19 @@
 {% block content %}
 <div class="glass-container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="color: white; margin: 0;">✈️ {% trans "Командировки" %}</h2>
+        <h2 style="color: white; margin: 0;">✈️ {% trans "Trips" %}</h2>
         {% if user.role != 'user' %}
         <div style="display: flex; gap: 10px;">
             <a href="{% url 'trips:import' %}" class="btn-primary"
                 style="text-decoration: none; background-color: #28a745; border-color: #28a745;">
-                📥 {% trans "Импорт" %}
+                📥 {% trans "Import" %}
             </a>
             <a href="{% url 'trips:export' %}" class="btn-primary"
                 style="text-decoration: none; background-color: #17a2b8; border-color: #17a2b8;">
-                📤 {% trans "Экспорт" %}
+                📤 {% trans "Export" %}
             </a>
             <a href="{% url 'trips:create' %}" class="btn-primary" style="text-decoration: none;">
-                + {% trans "Новая командировка" %}
+                + {% trans "New Trip" %}
             </a>
         </div>
         {% endif %}
@@ -24,11 +24,11 @@
 
     <!-- Filters -->
     <form method="get" style="margin-bottom: 20px; display: flex; gap: 10px;">
-        <input type="text" name="q" placeholder="{% trans 'Поиск...' %}" value="{{ request.GET.q|default:'' }}"
+        <input type="text" name="q" placeholder="{% trans 'Search...' %}" value="{{ request.GET.q|default:'' }}"
             style="width: 200px; margin: 0;">
 
         <select name="status" style="width: 200px; margin: 0;" onchange="this.form.submit()">
-            <option value="">{% trans "Все статусы" %}</option>
+            <option value="">{% trans "All Statuses" %}</option>
             {% for status in statuses %}
             <option value="{{ status.pk }}" {% if selected_status == status.pk %}selected{% endif %}>
                 {{ status.name }}
@@ -36,12 +36,12 @@
             {% endfor %}
         </select>
 
-        <button type="submit" class="btn-primary" style="padding: 5px 15px;">🔍 {% trans "Найти" %}</button>
+        <button type="submit" class="btn-primary" style="padding: 5px 15px;">🔍 {% trans "Search" %}</button>
 
         {% if request.GET.q or request.GET.status %}
         <a href="{% url 'trips:list' %}" class="btn-primary" style="background-color: #6c757d; border-color: #6c757d;
                       text-decoration: none; padding: 6px 15px;">
-            {% trans "Сброс" %}
+            {% trans "Reset" %}
         </a>
         {% endif %}
     </form>
@@ -50,13 +50,13 @@
         <thead>
             <tr>
                 <th>№</th>
-                <th>{% trans "Номер командировки" %}</th>
-                <th>{% trans "Сотрудник" %}</th>
-                <th>{% trans "Место назначения" %}</th>
-                <th>{% trans "Оборудование" %}</th>
-                <th>{% trans "Статус" %}</th>
-                <th>{% trans "Сопровождающий" %}</th>
-                <th>{% trans "Действия" %}</th>
+                <th>{% trans "Trip Number" %}</th>
+                <th>{% trans "Employee" %}</th>
+                <th>{% trans "Destination" %}</th>
+                <th>{% trans "Equipment" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th>{% trans "Escort" %}</th>
+                <th>{% trans "Actions" %}</th>
             </tr>
         </thead>
         <tbody>
@@ -96,7 +96,7 @@
             {% empty %}
             <tr>
                 <td colspan="8" style="text-align: center; padding: 20px;">
-                    {% trans "Командировок пока нет" %}
+                    {% trans "No trips yet" %}
                 </td>
             </tr>
             {% endfor %}

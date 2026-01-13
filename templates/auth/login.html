@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="glass-container" style="max-width: 400px; margin: 100px auto; padding: 40px; box-shadow: var(--shadow-md);">
-    <h2 style="text-align: center; margin-bottom: 30px;">{% trans "Вход в систему" %}</h2>
+    <h2 style="text-align: center; margin-bottom: 30px;">{% trans "Login" %}</h2>
     <form method="post">
         {% csrf_token %}
 
@@ -15,16 +15,16 @@
         {% endif %}
 
         <div style="margin-bottom: 20px;">
-            <label>{% trans "Логин" %}</label>
+            <label>{% trans "Username" %}</label>
             {{ form.username }}
         </div>
 
         <div style="margin-bottom: 30px;">
-            <label>{% trans "Пароль" %}</label>
+            <label>{% trans "Password" %}</label>
             {{ form.password }}
         </div>
 
-        <button type="submit" class="btn-primary" style="width: 100%;">{% trans "Войти" %}</button>
+        <button type="submit" class="btn-primary" style="width: 100%;">{% trans "Sign in" %}</button>
     </form>
 </div>
 {% endblock %}
