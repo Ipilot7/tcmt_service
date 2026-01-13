@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-13 12:56+0300\n"
+"POT-Creation-Date: 2026-01-13 14:21+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,289 +19,339 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: .\templates\auth\login.html:6
-msgid "Вход в систему"
-msgstr "Login"
+msgid "Login"
+msgstr ""
 
 #: .\templates\auth\login.html:18
-msgid "Логин"
-msgstr "Username"
+msgid "Username"
+msgstr ""
 
 #: .\templates\auth\login.html:23
-msgid "Пароль"
-msgstr "Password"
+msgid "Password"
+msgstr ""
 
 #: .\templates\auth\login.html:27
-msgid "Войти"
-msgstr "Sign In"
+msgid "Sign in"
+msgstr ""
 
-#: .\templates\base.html:19
-msgid "Дашборд"
-msgstr "Dashboard"
+#: .\templates\base.html:19 .\templates\dashboard\index.html:5
+msgid "Dashboard"
+msgstr ""
 
 #: .\templates\base.html:20 .\templates\dashboard\index.html:13
-msgid "Заявки"
-msgstr "Requests"
+#: .\templates\dashboard\statistics.html:52
+msgid "Requests"
+msgstr ""
 
 #: .\templates\base.html:21 .\templates\dashboard\index.html:32
-#: .\templates\trips\list.html:7
-msgid "Командировки"
-msgstr "Business Trips"
+#: .\templates\dashboard\statistics.html:65 .\templates\trips\list.html:7
+msgid "Trips"
+msgstr ""
 
-#: .\templates\base.html:31
-msgid "Выход"
-msgstr "Logout"
+#: .\templates\base.html:22
+msgid "Statistics"
+msgstr ""
 
-#: .\templates\dashboard\index.html:5
-msgid "Панель управления"
-msgstr "Dashboard"
+#: .\templates\base.html:32
+msgid "Logout"
+msgstr ""
+
+#: .\templates\common\import_form.html:7
+msgid "Import data from Excel"
+msgstr ""
+
+#: .\templates\common\import_form.html:11
+msgid ""
+"Select an .xlsx file to upload. Ensure column format meets requirements."
+msgstr ""
+
+#: .\templates\common\import_form.html:24 .\templates\requests\form.html:63
+#: .\templates\trips\form.html:90
+msgid "Cancel"
+msgstr ""
+
+#: .\templates\common\import_form.html:27
+msgid "Upload"
+msgstr ""
 
 #: .\templates\dashboard\index.html:14
-msgid "Просмотр и управление заявками на обслуживание"
-msgstr "View and manage service requests"
+msgid "View and manage service requests"
+msgstr ""
 
 #: .\templates\dashboard\index.html:19 .\templates\requests\list.html:7
-msgid "Список заявок"
-msgstr "Requests List"
+msgid "Requests List"
+msgstr ""
 
 #: .\templates\dashboard\index.html:21 .\templates\dashboard\index.html:41
-msgid "Создать"
-msgstr "Create"
+msgid "Create"
+msgstr ""
 
 #: .\templates\dashboard\index.html:33
-msgid "Учет и планирование командировок сотрудников"
-msgstr "Accounting and planning of employee business trips"
+msgid "Accounting and planning of employee trips"
+msgstr ""
 
 #: .\templates\dashboard\index.html:38
-msgid "Список командировок"
-msgstr "Trips List"
+msgid "Trips List"
+msgstr ""
+
+#: .\templates\dashboard\statistics.html:6
+msgid "Statistics & KPI"
+msgstr ""
+
+#: .\templates\dashboard\statistics.html:15
+msgid "All Employees"
+msgstr ""
+
+#: .\templates\dashboard\statistics.html:40
+msgid "Apply Filters"
+msgstr ""
+
+#: .\templates\dashboard\statistics.html:57
+#: .\templates\dashboard\statistics.html:70
+msgid "Completed"
+msgstr ""
+
+#: .\templates\dashboard\statistics.html:86
+#: .\templates\dashboard\statistics.html:118
+msgid "Number"
+msgstr ""
+
+#: .\templates\dashboard\statistics.html:87
+#: .\templates\dashboard\statistics.html:119 .\templates\requests\form.html:46
+#: .\templates\requests\list.html:54 .\templates\trips\form.html:45
+msgid "Date"
+msgstr ""
+
+#: .\templates\dashboard\statistics.html:88
+#: .\templates\dashboard\statistics.html:120 .\templates\requests\form.html:40
+#: .\templates\requests\list.html:58
+msgid "Responsible"
+msgstr ""
+
+#: .\templates\dashboard\statistics.html:89
+#: .\templates\dashboard\statistics.html:121 .\templates\requests\form.html:43
+#: .\templates\requests\list.html:57 .\templates\trips\form.html:62
+#: .\templates\trips\list.html:57
+msgid "Status"
+msgstr ""
 
 #: .\templates\requests\detail.html:8
-msgid "Заявка"
-msgstr "Request"
+msgid "Request"
+msgstr ""
 
 #: .\templates\requests\detail.html:9 .\templates\trips\detail.html:9
-msgid "от"
-msgstr "from"
+msgid "from"
+msgstr ""
 
 #: .\templates\requests\detail.html:23
-msgid "Локация"
-msgstr "Location"
+msgid "Location"
+msgstr ""
 
 #: .\templates\requests\detail.html:24 .\templates\trips\detail.html:29
-msgid "Регион:"
-msgstr "Region:"
+msgid "Region:"
+msgstr ""
 
 #: .\templates\requests\detail.html:25 .\templates\trips\detail.html:30
-msgid "Учреждение:"
-msgstr "Institution:"
+msgid "Institution:"
+msgstr ""
 
-#: .\templates\requests\detail.html:27 .\templates\requests\list.html:46
-#: .\templates\trips\list.html:46
-msgid "Оборудование"
-msgstr "Equipment"
+#: .\templates\requests\detail.html:27 .\templates\requests\list.html:56
+#: .\templates\trips\list.html:56
+msgid "Equipment"
+msgstr ""
 
 #: .\templates\requests\detail.html:29
-msgid "Тип:"
-msgstr "Type:"
+msgid "Type:"
+msgstr ""
 
 #: .\templates\requests\detail.html:32
-msgid "Контакт"
-msgstr "Contact"
+msgid "Contact"
+msgstr ""
 
 #: .\templates\requests\detail.html:33
-msgid "Телефон:"
-msgstr "Phone:"
+msgid "Phone:"
+msgstr ""
 
 #: .\templates\requests\detail.html:34 .\templates\trips\detail.html:38
-msgid "Ответственный:"
-msgstr "Responsible:"
+msgid "Responsible:"
+msgstr ""
 
 #: .\templates\requests\detail.html:39 .\templates\requests\form.html:56
-msgid "Описание проблемы"
-msgstr "Problem Description"
+msgid "Problem Description"
+msgstr ""
 
 #: .\templates\requests\detail.html:51 .\templates\trips\detail.html:68
-msgid "Редактировать"
-msgstr "Edit"
+msgid "Edit"
+msgstr ""
 
 #: .\templates\requests\form.html:8
-msgid "Редактирование заявки"
-msgstr "Edit Request"
+msgid "Edit Request"
+msgstr ""
 
-#: .\templates\requests\form.html:10 .\templates\requests\list.html:10
-msgid "Новая заявка"
-msgstr "New Request"
+#: .\templates\requests\form.html:10 .\templates\requests\list.html:19
+msgid "New Request"
+msgstr ""
 
 #: .\templates\requests\form.html:26 .\templates\trips\form.html:30
-msgid "Регион"
-msgstr "Region"
+msgid "Region"
+msgstr ""
 
-#: .\templates\requests\form.html:29 .\templates\requests\list.html:45
+#: .\templates\requests\form.html:29 .\templates\requests\list.html:55
 #: .\templates\trips\form.html:33
-msgid "Учреждение"
-msgstr "Institution"
+msgid "Institution"
+msgstr ""
 
 #: .\templates\requests\form.html:32 .\templates\trips\form.html:36
-msgid "Тип оборудования"
-msgstr "Equipment Type"
+msgid "Equipment Type"
+msgstr ""
 
 #: .\templates\requests\form.html:35
-msgid "Контактный телефон"
-msgstr "Contact Phone"
-
-#: .\templates\requests\form.html:40 .\templates\requests\list.html:48
-msgid "Ответственный"
-msgstr "Responsible"
-
-#: .\templates\requests\form.html:43 .\templates\requests\list.html:47
-#: .\templates\trips\form.html:62 .\templates\trips\list.html:47
-msgid "Статус"
-msgstr "Status"
-
-#: .\templates\requests\form.html:46 .\templates\requests\list.html:44
-#: .\templates\trips\form.html:45
-msgid "Дата"
-msgstr "Date"
-
-#: .\templates\requests\form.html:63 .\templates\trips\form.html:90
-msgid "Отмена"
-msgstr "Cancel"
+msgid "Contact Phone"
+msgstr ""
 
 #: .\templates\requests\form.html:65 .\templates\trips\form.html:92
-msgid "Сохранить"
-msgstr "Save"
+msgid "Save"
+msgstr ""
 
-#: .\templates\requests\list.html:17
-msgid "Поиск по номеру..."
-msgstr "Search by number..."
+#: .\templates\requests\list.html:12 .\templates\trips\list.html:12
+msgid "Import"
+msgstr ""
 
-#: .\templates\requests\list.html:21 .\templates\trips\list.html:21
-msgid "Все статусы"
-msgstr "All Statuses"
+#: .\templates\requests\list.html:16 .\templates\trips\list.html:16
+msgid "Export"
+msgstr ""
 
-#: .\templates\requests\list.html:29 .\templates\trips\list.html:29
-msgid "Найти"
-msgstr "Search"
+#: .\templates\requests\list.html:27
+msgid "Search by number..."
+msgstr ""
 
-#: .\templates\requests\list.html:34 .\templates\trips\list.html:34
-msgid "Сброс"
-msgstr "Reset"
+#: .\templates\requests\list.html:31 .\templates\trips\list.html:31
+msgid "All Statuses"
+msgstr ""
 
-#: .\templates\requests\list.html:43
-msgid "Номер заявки"
-msgstr "Request Number"
+#: .\templates\requests\list.html:39 .\templates\trips\list.html:39
+msgid "Search"
+msgstr ""
 
-#: .\templates\requests\list.html:49 .\templates\trips\list.html:49
-msgid "Действия"
-msgstr "Actions"
+#: .\templates\requests\list.html:44 .\templates\trips\list.html:44
+msgid "Reset"
+msgstr ""
 
-#: .\templates\requests\list.html:84
-msgid "Заявок пока нет"
-msgstr "No requests yet"
+#: .\templates\requests\list.html:53
+msgid "Request Number"
+msgstr ""
+
+#: .\templates\requests\list.html:59 .\templates\trips\list.html:59
+msgid "Actions"
+msgstr ""
+
+#: .\templates\requests\list.html:99
+msgid "No requests yet"
+msgstr ""
 
 #: .\templates\trips\detail.html:8 .\templates\trips\form.html:8
-msgid "Командировка"
-msgstr "Trip"
+msgid "Trip"
+msgstr ""
 
 #: .\templates\trips\detail.html:17
-msgid "Приказ:"
-msgstr "Order:"
+msgid "Order:"
+msgstr ""
 
 #: .\templates\trips\detail.html:28
-msgid "Объект"
-msgstr "Object"
+msgid "Object"
+msgstr ""
 
 #: .\templates\trips\detail.html:31
-msgid "Оборудование:"
-msgstr "Equipment:"
+msgid "Equipment:"
+msgstr ""
 
 #: .\templates\trips\detail.html:32
-msgid "Контакт объекта:"
-msgstr "Object Contact:"
+msgid "Object Contact:"
+msgstr ""
 
 #: .\templates\trips\detail.html:37
-msgid "Участники"
-msgstr "Participants"
+msgid "Participants"
+msgstr ""
 
 #: .\templates\trips\detail.html:40
-msgid "Встречающий:"
-msgstr "Meeter:"
+msgid "Meeter:"
+msgstr ""
 
 #: .\templates\trips\detail.html:50
-msgid "Причина / Задача"
-msgstr "Reason / Task"
+msgid "Reason / Task"
+msgstr ""
 
 #: .\templates\trips\detail.html:56
-msgid "Результат"
-msgstr "Result"
+msgid "Result"
+msgstr ""
 
-#: .\templates\trips\form.html:10 .\templates\trips\list.html:10
-msgid "Новая командировка"
-msgstr "New Trip"
+#: .\templates\trips\form.html:10 .\templates\trips\list.html:19
+msgid "New Trip"
+msgstr ""
 
 #: .\templates\trips\form.html:28
-msgid "Основная информация"
-msgstr "Basic Information"
+msgid "General Information"
+msgstr ""
 
 #: .\templates\trips\form.html:39
-msgid "Контактный телефон (объекта)"
-msgstr "Object Contact Phone"
+msgid "Contact Phone (Object)"
+msgstr ""
 
 #: .\templates\trips\form.html:42
-msgid "Номер приказа"
-msgstr "Order Number"
+msgid "Order Number"
+msgstr ""
 
 #: .\templates\trips\form.html:57
-msgid "Детали выполнения"
-msgstr "Execution Details"
+msgid "Execution Details"
+msgstr ""
 
 #: .\templates\trips\form.html:59
-msgid "Ответственный сотрудник"
-msgstr "Responsible Employee"
+msgid "Responsible Employee"
+msgstr ""
 
 #: .\templates\trips\form.html:66
-msgid "Сопровождение"
-msgstr "Escort"
+msgid "Accompaniment"
+msgstr ""
 
 #: .\templates\trips\form.html:68
-msgid "ФИО сопровождающего"
-msgstr "Escort Full Name"
+msgid "Escort Name"
+msgstr ""
 
 #: .\templates\trips\form.html:71
-msgid "Телефон сопровождающего"
-msgstr "Escort Phone"
+msgid "Escort Phone"
+msgstr ""
 
 #: .\templates\trips\form.html:78
-msgid "Причина командировки"
-msgstr "Trip Reason"
+msgid "Trip Reason"
+msgstr ""
 
 #: .\templates\trips\form.html:82
-msgid "Результат / Сведения о выполнении"
-msgstr "Result / Execution Info"
+msgid "Result / Execution Info"
+msgstr ""
 
-#: .\templates\trips\list.html:17
-msgid "Поиск..."
-msgstr "Search..."
+#: .\templates\trips\list.html:27
+msgid "Search..."
+msgstr ""
 
-#: .\templates\trips\list.html:43
-msgid "Номер командировки"
-msgstr "Trip Number"
+#: .\templates\trips\list.html:53
+msgid "Trip Number"
+msgstr ""
 
-#: .\templates\trips\list.html:44
-msgid "Сотрудник"
-msgstr "Employee"
+#: .\templates\trips\list.html:54
+msgid "Employee"
+msgstr ""
 
-#: .\templates\trips\list.html:45
-msgid "Место назначения"
-msgstr "Destination"
+#: .\templates\trips\list.html:55
+msgid "Destination"
+msgstr ""
 
-#: .\templates\trips\list.html:48
-msgid "Сопровождающий"
-msgstr "Escort"
+#: .\templates\trips\list.html:58
+msgid "Escort"
+msgstr ""
 
-#: .\templates\trips\list.html:89
-msgid "Командировок пока нет"
-msgstr "No trips yet"
+#: .\templates\trips\list.html:99
+msgid "No trips yet"
+msgstr ""
 
 #: .\venv\Lib\site-packages\django\contrib\messages\apps.py:16
 msgid "Messages"
