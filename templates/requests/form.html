@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="glass-container" style="max-width: 800px; margin: 0 auto;">
+    <h2 style="color: black; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px;">
+        {% if form.instance.pk %}
+        Редактирование заявки {{ form.instance.request_number }}
+        {% else %}
+        Новая заявка
+        {% endif %}
+    </h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div
+            style="color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 20px;">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <label>Регион</label>
+                {{ form.region }}
+
+                <label>Учреждение</label>
+                {{ form.institution }}
+
+                <label>Тип оборудования</label>
+                {{ form.equipment_type }}
+
+                <label>Контактный телефон</label>
+                {{ form.contact_phone }}
+            </div>
+
+            <div>
+                <label>Ответственный</label>
+                {{ form.responsible }}
+
+                <label>Статус</label>
+                {{ form.status }}
+
+                <label>Дата</label>
+                {% if 'created_at' in form.fields %}
+                {{ form.created_at }}
+                {% else %}
+                <input type="text" value="{{ form.instance.created_at|date:'d.m.Y' }}" disabled>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="margin-top: 10px;">
+            <label>Описание проблемы</label>
+            {{ form.description }}
+        </div>
+
+        <div style="margin-top: 20px; text-align: right;">
+            <a href="{% url 'requests:list' %}" class="btn-primary"
+                style="background-color: #6c757d; border-color: #6c757d; margin-right: 10px;">
+                Отмена
+            </a>
+            <button type="submit" class="btn-primary">Сохранить</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

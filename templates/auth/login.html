@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="glass-container" style="max-width: 400px; margin: 100px auto; padding: 40px; box-shadow: var(--shadow-md);">
+    <h2 style="text-align: center; margin-bottom: 30px;">Вход в систему</h2>
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div
+            style="color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 20px;">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div style="margin-bottom: 20px;">
+            <label>Логин</label>
+            {{ form.username }}
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <label>Пароль</label>
+            {{ form.password }}
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%;">Войти</button>
+    </form>
+</div>
+{% endblock %}

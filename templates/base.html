@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCMT Service</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <div class="app-container">
+        {% if user.is_authenticated %}
+        <aside class="sidebar">
+            <h2 style="color: white !important; border-bottom: 1px solid rgba(255,255,255,0.1);">TCMT Service</h2>
+            <nav>
+                <a href="{% url 'index' %}">🧭 Дашборд</a>
+                <a href="{% url 'requests:list' %}">📋 Заявки</a>
+                <a href="{% url 'trips:list' %}">✈️ Командировки</a>
+                <hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">
+                <div style="padding: 10px; font-size: 0.9em; color: #adb5bd;">
+                    👤 {{ user.username }} <br>
+                    <span style="font-size: 0.8em; opacity: 0.7;">{{ user.get_role_display }}</span>
+                </div>
+                <form action="{% url 'logout' %}" method="post" style="padding: 0; margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit"
+                        style="background: none; border: none; color: #ff6b6b; cursor: pointer; padding: 10px 15px; width: 100%; text-align: left; font-size: 1rem;">🚪
+                        Выход</button>
+                </form>
+            </nav>
+        </aside>
+        {% endif %}
+
+        <main class="main-content">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+</body>
+
+</html>

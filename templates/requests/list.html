@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="glass-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="color: white; margin: 0;">📋 Список заявок</h2>
+        {% if user.role != 'user' %}
+            <a href="{% url 'requests:create' %}" class="btn-primary" style="text-decoration: none;">
+                + Новая заявка
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Filters -->
+    <form method="get" style="margin-bottom: 20px; display: flex; gap: 10px;">
+        <input
+            type="text"
+            name="q"
+            placeholder="Поиск по номеру..."
+            value="{{ request.GET.q|default:'' }}"
+            style="width: 200px; margin: 0;"
+        >
+
+        <select name="status" style="width: 200px; margin: 0;" onchange="this.form.submit()">
+            <option value="">Все статусы</option>
+            {% for status in statuses %}
+                <option value="{{ status.pk }}"
+                    {% if selected_status == status.pk %}selected{% endif %}>
+                    {{ status.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn-primary" style="padding: 5px 15px;">🔍 Найти</button>
+
+        {% if request.GET.q or request.GET.status %}
+            <a href="{% url 'requests:list' %}"
+               class="btn-primary"
+               style="background-color: #6c757d; border-color: #6c757d; text-decoration: none; padding: 6px 15px;">
+                Сброс
+            </a>
+        {% endif %}
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Номер заявки</th>
+                <th>Дата</th>
+                <th>Учреждение</th>
+                <th>Оборудование</th>
+                <th>Статус</th>
+                <th>Ответственный</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in requests %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><strong>{{ req.request_number }}</strong></td>
+                <td>{{ req.created_at|date:"d.m.Y" }}</td>
+                <td>
+                    {{ req.institution.name }}<br>
+                    <span style="font-size: 0.8em; opacity: 0.7;">
+                        {{ req.region.name }}
+                    </span>
+                </td>
+                <td>{{ req.equipment_type.name }}</td>
+                <td>
+                    <span style="padding: 4px 8px; border-radius: 4px;
+                                 background: rgba(255,255,255,0.3); font-size: 0.9em;">
+                        {{ req.status.name }}
+                    </span>
+                </td>
+                <td>{{ req.responsible.full_name }}</td>
+                <td>
+                    {% if user.role == 'user' and req.status.name in closed_statuses %}
+                        <span style="opacity: 0.3; margin-right: 10px;">🔒</span>
+                    {% else %}
+                        <a href="{% url 'requests:update' req.pk %}"
+                           style="color: white; margin-right: 10px;">✏️</a>
+                    {% endif %}
+                    <a href="{% url 'requests:detail' req.pk %}" style="color: white;">👁️</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 20px;">
+                    Заявок пока нет
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
