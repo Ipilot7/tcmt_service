@@ -6,9 +6,19 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2 style="color: white; margin: 0;">✈️ {% trans "Командировки" %}</h2>
         {% if user.role != 'user' %}
-        <a href="{% url 'trips:create' %}" class="btn-primary" style="text-decoration: none;">
-            + {% trans "Новая командировка" %}
-        </a>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'trips:import' %}" class="btn-primary"
+                style="text-decoration: none; background-color: #28a745; border-color: #28a745;">
+                📥 {% trans "Импорт" %}
+            </a>
+            <a href="{% url 'trips:export' %}" class="btn-primary"
+                style="text-decoration: none; background-color: #17a2b8; border-color: #17a2b8;">
+                📤 {% trans "Экспорт" %}
+            </a>
+            <a href="{% url 'trips:create' %}" class="btn-primary" style="text-decoration: none;">
+                + {% trans "Новая командировка" %}
+            </a>
+        </div>
         {% endif %}
     </div>
 

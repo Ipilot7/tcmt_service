@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="glass-container" style="max-width: 600px; margin: 0 auto;">
+    <h2 style="color: white; margin-bottom: 20px;">
+        {% trans "Импорт данных из Excel" %}
+    </h2>
+
+    <p style="color: rgba(255,255,255,0.7); margin-bottom: 20px;">
+        {% trans "Выберите файл .xlsx для загрузки. Убедитесь, что формат колонок соответствует требованиям." %}
+    </p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div style="margin-bottom: 20px;">
+            <input type="file" name="file" required accept=".xlsx, .xls"
+                style="color: white; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; width: 100%;">
+        </div>
+
+        <div style="text-align: right;">
+            <a href="javascript:history.back()" class="btn-primary"
+                style="background-color: #6c757d; border-color: #6c757d; margin-right: 10px; text-decoration: none;">
+                {% trans "Отмена" %}
+            </a>
+            <button type="submit" class="btn-primary">
+                {% trans "Загрузить" %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

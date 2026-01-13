@@ -8,4 +8,6 @@ urlpatterns = [
     path('create/', views.TripCreateView.as_view(), name='create'),
     path('<int:pk>/', views.TripDetailView.as_view(), name='detail'),
     path('<int:pk>/edit/', views.TripUpdateView.as_view(), name='update'),
+    path('export/', views.export_trips_to_excel, name='export'),
+    path('import/', views.import_trips_from_excel, name='import'),
 ]
