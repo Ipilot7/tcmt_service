@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block content %}
 <div class="glass-container" style="max-width: 800px; margin: 0 auto;">
     <h2 style="color: black; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px;">
         {% if form.instance.pk %}
-        Редактирование заявки {{ form.instance.request_number }}
+        {% trans "Редактирование заявки" %} {{ form.instance.request_number }}
         {% else %}
-        Новая заявка
+        {% trans "Новая заявка" %}
         {% endif %}
     </h2>
 
@@ -22,27 +23,27 @@
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div>
-                <label>Регион</label>
+                <label>{% trans "Регион" %}</label>
                 {{ form.region }}
 
-                <label>Учреждение</label>
+                <label>{% trans "Учреждение" %}</label>
                 {{ form.institution }}
 
-                <label>Тип оборудования</label>
+                <label>{% trans "Тип оборудования" %}</label>
                 {{ form.equipment_type }}
 
-                <label>Контактный телефон</label>
+                <label>{% trans "Контактный телефон" %}</label>
                 {{ form.contact_phone }}
             </div>
 
             <div>
-                <label>Ответственный</label>
+                <label>{% trans "Ответственный" %}</label>
                 {{ form.responsible }}
 
-                <label>Статус</label>
+                <label>{% trans "Статус" %}</label>
                 {{ form.status }}
 
-                <label>Дата</label>
+                <label>{% trans "Дата" %}</label>
                 {% if 'created_at' in form.fields %}
                 {{ form.created_at }}
                 {% else %}
@@ -52,16 +53,16 @@
         </div>
 
         <div style="margin-top: 10px;">
-            <label>Описание проблемы</label>
+            <label>{% trans "Описание проблемы" %}</label>
             {{ form.description }}
         </div>
 
         <div style="margin-top: 20px; text-align: right;">
             <a href="{% url 'requests:list' %}" class="btn-primary"
                 style="background-color: #6c757d; border-color: #6c757d; margin-right: 10px;">
-                Отмена
+                {% trans "Отмена" %}
             </a>
-            <button type="submit" class="btn-primary">Сохранить</button>
+            <button type="submit" class="btn-primary">{% trans "Сохранить" %}</button>
         </div>
     </form>
 </div>

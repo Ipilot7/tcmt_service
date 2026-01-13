@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block content %}
 <div class="glass-container" style="max-width: 900px; margin: 0 auto;">
     <h2 style="color: black; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px;">
         {% if form.instance.pk %}
-        ✏️ Командировка {{ form.instance.request_number }}
+        ✏️ {% trans "Командировка" %} {{ form.instance.request_number }}
         {% else %}
-        ➕ Новая командировка
+        ➕ {% trans "Новая командировка" %}
         {% endif %}
     </h2>
 
@@ -24,24 +25,24 @@
             <!-- Левая колонка -->
             <div>
                 <h4 style="color: #6c757d; margin-bottom: 15px; border-bottom: 1px solid #dee2e6; padding-bottom: 5px;">
-                    Основная информация</h4>
+                    {% trans "Основная информация" %}</h4>
 
-                <label>Регион</label>
+                <label>{% trans "Регион" %}</label>
                 {{ form.region }}
 
-                <label>Учреждение</label>
+                <label>{% trans "Учреждение" %}</label>
                 {{ form.institution }}
 
-                <label>Тип оборудования</label>
+                <label>{% trans "Тип оборудования" %}</label>
                 {{ form.equipment_type }}
 
-                <label>Контактный телефон (объекта)</label>
+                <label>{% trans "Контактный телефон (объекта)" %}</label>
                 {{ form.contact_phone }}
 
-                <label>Номер приказа</label>
+                <label>{% trans "Номер приказа" %}</label>
                 {{ form.order_number }}
 
-                <label>Дата</label>
+                <label>{% trans "Дата" %}</label>
                 {% if 'created_at' in form.fields %}
                 {{ form.created_at }}
                 {% else %}
@@ -53,32 +54,32 @@
             <!-- Правая колонка -->
             <div>
                 <h4 style="color: #6c757d; margin-bottom: 15px; border-bottom: 1px solid #dee2e6; padding-bottom: 5px;">
-                    Детали выполнения</h4>
+                    {% trans "Детали выполнения" %}</h4>
 
-                <label>Ответственный сотрудник</label>
+                <label>{% trans "Ответственный сотрудник" %}</label>
                 {{ form.responsible }}
 
-                <label>Статус</label>
+                <label>{% trans "Статус" %}</label>
                 {{ form.status }}
 
                 <h4 style="color: #6c757d; margin: 25px 0 15px; border-bottom: 1px solid #dee2e6; padding-bottom: 5px;">
-                    Сопровождение</h4>
+                    {% trans "Сопровождение" %}</h4>
 
-                <label>ФИО сопровождающего</label>
+                <label>{% trans "ФИО сопровождающего" %}</label>
                 {{ form.escort_name }}
 
-                <label>Телефон сопровождающего</label>
+                <label>{% trans "Телефон сопровождающего" %}</label>
                 {{ form.escort_phone }}
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
             <div>
-                <label>Причина командировки</label>
+                <label>{% trans "Причина командировки" %}</label>
                 {{ form.description }}
             </div>
             <div>
-                <label>Результат / Сведения о выполнении</label>
+                <label>{% trans "Результат / Сведения о выполнении" %}</label>
                 {{ form.result_info }}
             </div>
         </div>
@@ -86,9 +87,9 @@
         <div style="margin-top: 30px; text-align: right;">
             <a href="{% url 'trips:list' %}" class="btn-primary"
                 style="background-color: #6c757d; border-color: #6c757d; margin-right: 15px;">
-                Отмена
+                {% trans "Отмена" %}
             </a>
-            <button type="submit" class="btn-primary">Сохранить</button>
+            <button type="submit" class="btn-primary">{% trans "Сохранить" %}</button>
         </div>
     </form>
 </div>
