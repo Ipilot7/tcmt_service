@@ -7,6 +7,6 @@ urlpatterns = [
     path('auth/', include('apps.users.urls')),
     path('requests/', include('apps.requests.urls', namespace='requests')),
     path('trips/', include('apps.trips.urls', namespace='trips')),
+    path('core/', include('apps.core.urls', namespace='core')),
     path('i18n/', include('django.conf.urls.i18n')),
-    # We will add other apps here later
 ]

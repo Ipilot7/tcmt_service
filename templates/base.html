@@ -20,23 +20,23 @@
                 <a href="{% url 'requests:list' %}">📋 {% trans "Requests" %}</a>
                 <a href="{% url 'trips:list' %}">✈️ {% trans "Trips" %}</a>
 
-                {% if user.role == 'admin' %}
                 <div class="menu-divider">{% trans "Statistics" %}</div>
                 <a href="{% url 'stats' %}">📊 {% trans "General Stats" %}</a>
+                {% if user.role == 'admin' %}
                 <a href="{% url 'user-stats' %}">👥 {% trans "User Activity" %}</a>
+                {% endif %}
 
+                {% if user.role == 'admin' or user.role == 'manager' %}
                 <div class="menu-divider">{% trans "Management" %}</div>
                 <a href="{% url 'users:list' %}">👤 {% trans "Users" %}</a>
                 <a href="{% url 'core:institution_list' %}">🏥 {% trans "Institutions" %}</a>
-                {% else %}
-                <a href="{% url 'stats' %}">📊 {% trans "Statistics" %}</a>
                 {% endif %}
                 <hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">
                 <div style="padding: 10px; font-size: 0.9em; color: #adb5bd;">
                     👤 {{ user.username }} <br>
                     <span style="font-size: 0.8em; opacity: 0.7;">{{ user.get_role_display }}</span>
                 </div>
-                <form action="{% url 'logout' %}" method="post" style="padding: 0; margin: 0;">
+                <form action="{% url 'users:logout' %}" method="post" style="padding: 0; margin: 0;">
                     {% csrf_token %}
                     <button type="submit"
                         style="background: none; border: none; color: #ff6b6b; cursor: pointer; padding: 10px 15px; width: 100%; text-align: left; font-size: 1rem;">🚪
