@@ -22,6 +22,7 @@ class TripListView(LoginRequiredMixin, ListView):
     template_name = 'trips/list.html'
     context_object_name = 'trips'
     ordering = ['-created_at']
+    paginate_by = 15
 
     def get_queryset(self):
         queryset = super().get_queryset()

@@ -19,6 +19,7 @@ class InstitutionListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
     model = Institution
     template_name = 'core/institution_list.html'
     context_object_name = 'institutions'
+    paginate_by = 15
 
 class InstitutionCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
     model = Institution

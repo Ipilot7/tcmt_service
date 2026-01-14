@@ -26,6 +26,7 @@ class RequestListView(LoginRequiredMixin, ListView):
     template_name = 'requests/list.html'
     context_object_name = 'requests'
     ordering = ['-created_at']
+    paginate_by = 15
 
     def get_queryset(self):
         queryset = super().get_queryset()

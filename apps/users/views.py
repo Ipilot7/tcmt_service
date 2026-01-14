@@ -15,6 +15,7 @@ class UserListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
     model = User
     template_name = 'users/list.html'
     context_object_name = 'users'
+    paginate_by = 15
 
 class UserCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
     model = User
