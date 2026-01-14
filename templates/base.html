@@ -19,7 +19,18 @@
                 <a href="{% url 'index' %}">🧭 {% trans "Dashboard" %}</a>
                 <a href="{% url 'requests:list' %}">📋 {% trans "Requests" %}</a>
                 <a href="{% url 'trips:list' %}">✈️ {% trans "Trips" %}</a>
+
+                {% if user.role == 'admin' %}
+                <div class="menu-divider">{% trans "Statistics" %}</div>
+                <a href="{% url 'stats' %}">📊 {% trans "General Stats" %}</a>
+                <a href="{% url 'user-stats' %}">👥 {% trans "User Activity" %}</a>
+
+                <div class="menu-divider">{% trans "Management" %}</div>
+                <a href="{% url 'users:list' %}">👤 {% trans "Users" %}</a>
+                <a href="{% url 'core:institution_list' %}">🏥 {% trans "Institutions" %}</a>
+                {% else %}
                 <a href="{% url 'stats' %}">📊 {% trans "Statistics" %}</a>
+                {% endif %}
                 <hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">
                 <div style="padding: 10px; font-size: 0.9em; color: #adb5bd;">
                     👤 {{ user.username }} <br>

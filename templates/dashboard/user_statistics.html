@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="glass-container">
+    <h2 style="color: white; margin-bottom: 20px;">👤 {% trans "User Activity Statistics" %}</h2>
+
+    <form method="get"
+        style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; align-items: end;">
+        <div>
+            <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 5px;">{% trans "Start Date"
+                %}</label>
+            <input type="date" name="start_date" value="{{ start_date }}"
+                style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white;">
+        </div>
+
+        <div>
+            <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 5px;">{% trans "End Date"
+                %}</label>
+            <input type="date" name="end_date" value="{{ end_date }}"
+                style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white;">
+        </div>
+
+        <div>
+            <button type="submit" class="btn-primary" style="width: 100%;">
+                🔍 {% trans "Apply Filters" %}
+            </button>
+        </div>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "User" %}</th>
+                <th>{% trans "Req. Total" %}</th>
+                <th>{% trans "Req. Done" %}</th>
+                <th>{% trans "Trip Total" %}</th>
+                <th>{% trans "Trip Done" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stat in user_stats %}
+            <tr>
+                <td>{{ stat.user.full_name }} ({{ stat.user.username }})</td>
+                <td style="text-align: center;">{{ stat.req_total }}</td>
+                <td style="text-align: center; color: #28a745;">{{ stat.req_done }}</td>
+                <td style="text-align: center;">{{ stat.trip_total }}</td>
+                <td style="text-align: center; color: #28a745;">{{ stat.trip_done }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; color: rgba(255,255,255,0.5);">{% trans "No data found" %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

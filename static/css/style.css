@@ -58,6 +58,15 @@ body {
     color: #fff;
 }
 
+.menu-divider {
+    padding: 15px 15px 5px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: bold;
+}
+
 .main-content {
     flex: 1;
     padding: 2rem;
@@ -157,6 +166,14 @@ td {
     vertical-align: top;
     border-top: 1px solid var(--border-color);
     color: var(--text-secondary);
+}
+
+table a {
+    color: var(--primary-color) !important;
+}
+
+table a:hover {
+    text-decoration: underline;
 }
 
 /* Helpers */

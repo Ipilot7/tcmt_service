@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="glass-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="color: white; margin: 0;">👥 {% trans "Users" %}</h2>
+        <a href="{% url 'users:create' %}" class="btn-primary">➕ {% trans "Create User" %}</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "Username" %}</th>
+                <th>{% trans "Full Name" %}</th>
+                <th>{% trans "Role" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th>{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.full_name }}</td>
+                <td>{{ user.get_role_display }}</td>
+                <td>
+                    {% if user.is_active %}
+                    <span style="color: #28a745;">{% trans "Active" %}</span>
+                    {% else %}
+                    <span style="color: #dc3545;">{% trans "Inactive" %}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'users:update' user.pk %}" style="color: #007bff;">{% trans "Edit" %}</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; color: rgba(255,255,255,0.5);">{% trans "No users found" %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

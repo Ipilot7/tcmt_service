@@ -56,3 +56,51 @@ def statistics(request):
     }
 
     return render(request, 'dashboard/statistics.html', context)
+
+
+@login_required
+def user_statistics(request):
+    from django.core.exceptions import PermissionDenied
+    if request.user.role != User.Role.ADMIN:
+        raise PermissionDenied
+
+    users = User.objects.all()
+    user_stats_data = []
+
+    # Filter by date range for KPI
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+
+    if not start_date_str:
+        start_dt = (datetime.now() - timedelta(days=30))
+    else:
+        start_dt = datetime.strptime(start_date_str, '%Y-%m-%d')
+
+    if not end_date_str:
+        end_dt = datetime.now()
+    else:
+        end_dt = datetime.strptime(end_date_str, '%Y-%m-%d')
+
+    done_statuses = ['Выполнено', 'Закрыто', 'Completed', 'Closed']
+
+    for u in users:
+        req_total = Request.objects.filter(responsible=u, created_at__range=[start_dt, end_dt]).count()
+        req_done = Request.objects.filter(responsible=u, created_at__range=[start_dt, end_dt], status__name__in=done_statuses).count()
+        
+        trip_total = Trip.objects.filter(responsible=u, created_at__range=[start_dt, end_dt]).count()
+        trip_done = Trip.objects.filter(responsible=u, created_at__range=[start_dt, end_dt], status__name__in=done_statuses).count()
+
+        user_stats_data.append({
+            'user': u,
+            'req_total': req_total,
+            'req_done': req_done,
+            'trip_total': trip_total,
+            'trip_done': trip_done,
+        })
+
+    context = {
+        'user_stats': user_stats_data,
+        'start_date': start_dt.strftime('%Y-%m-%d'),
+        'end_date': end_dt.strftime('%Y-%m-%d'),
+    }
+    return render(request, 'dashboard/user_statistics.html', context)
