@@ -9,6 +9,14 @@ from apps.users.models import User
 from django.db.models import Q
 from apps.core.models import Status
 
+CLOSED_STATUSES = [
+    'Выполнено',
+    'Закрыто',
+    'Отменено',
+    'Completed',
+    'Closed',
+]
+
 class TripListView(LoginRequiredMixin, ListView):
     model = Trip
     template_name = 'trips/list.html'
@@ -17,6 +25,11 @@ class TripListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+
+        # 🔒 Filtering for regular users
+        if self.request.user.role == User.Role.USER:
+            queryset = queryset.filter(responsible=self.request.user).exclude(status__name__in=CLOSED_STATUSES)
+
         q = self.request.GET.get('q')
         status_id = self.request.GET.get('status')
 

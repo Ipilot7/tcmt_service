@@ -30,6 +30,10 @@ class RequestListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
 
+        # 🔒 Filtering for regular users
+        if self.request.user.role == User.Role.USER:
+            queryset = queryset.filter(responsible=self.request.user).exclude(status__name__in=CLOSED_STATUSES)
+
         q = self.request.GET.get('q')
         status_id = self.request.GET.get('status')
 

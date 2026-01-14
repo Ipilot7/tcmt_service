@@ -6,6 +6,8 @@ from django.core.exceptions import PermissionDenied
 from .models import Institution
 from .forms import InstitutionForm
 from apps.users.models import User
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
 
 class StaffRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
@@ -29,3 +31,4 @@ class InstitutionUpdateView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
     form_class = InstitutionForm
     template_name = 'core/institution_form.html'
     success_url = reverse_lazy('core:institution_list')
+
