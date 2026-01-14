@@ -22,8 +22,25 @@ class UserCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
     template_name = 'users/form.html'
     success_url = reverse_lazy('users:list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['current_user'] = self.request.user
+        return kwargs
+
 class UserUpdateView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
     model = User
     form_class = UserForm
     template_name = 'users/form.html'
     success_url = reverse_lazy('users:list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['current_user'] = self.request.user
+        return kwargs
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        # Managers can only edit users with 'user' role
+        if request.user.role == User.Role.MANAGER and obj.role != User.Role.USER:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
