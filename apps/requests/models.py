@@ -30,9 +30,7 @@ class Request(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.request_number:
-            import datetime
-            today = datetime.date.today()
-            year = str(today.year)[-2:]
+            year = str(self.created_at.year)[-2:]
             # Count existing requests for this year
             count = Request.objects.filter(request_number__startswith=f"SR-{year}").count() + 1
             self.request_number = f"SR-{year}-{count:04d}"

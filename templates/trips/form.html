@@ -93,4 +93,50 @@
         </div>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const regionSelect = document.querySelector('select[name="region"]');
+        const institutionSelect = document.querySelector('select[name="institution"]');
+        const institutionMapping = {{ institution_mapping|default: "[]" | safe
+    }};
+
+    // --- 1. Filter Institutions by Region ---
+    regionSelect.addEventListener('change', function () {
+        const selectedRegionId = this.value;
+        const options = institutionSelect.options;
+
+        for (let i = 0; i < options.length; i++) {
+            const opt = options[i];
+            if (!opt.value) continue; // Skip empty option
+
+            const instId = parseInt(opt.value);
+            const mapping = institutionMapping.find(m => m.id === instId);
+
+            if (!selectedRegionId || (mapping && mapping.region_id == selectedRegionId)) {
+                opt.style.display = '';
+            } else {
+                opt.style.display = 'none';
+                if (opt.selected) institutionSelect.value = '';
+            }
+        }
+    });
+
+    // --- 2. Auto-select Region by Institution ---
+    institutionSelect.addEventListener('change', function () {
+        const selectedInstId = this.value;
+        if (!selectedInstId) return;
+
+        const mapping = institutionMapping.find(m => m.id == selectedInstId);
+        if (mapping) {
+            regionSelect.value = mapping.region_id;
+        }
+    });
+
+    // Initial trigger to filter if region is already selected (e.g., on edit)
+    if (regionSelect.value) {
+        regionSelect.dispatchEvent(new Event('change'));
+    }
+    });
+</script>
 {% endblock %}

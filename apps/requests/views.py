@@ -37,6 +37,7 @@ class RequestListView(LoginRequiredMixin, ListView):
 
         q = self.request.GET.get('q')
         status_id = self.request.GET.get('status')
+        req_num = self.request.GET.get('req_num')
 
         if q:
             queryset = queryset.filter(
@@ -44,6 +45,13 @@ class RequestListView(LoginRequiredMixin, ListView):
                 Q(description__icontains=q) |
                 Q(responsible__full_name__icontains=q)
             )
+
+        if req_num:
+            if req_num.isdigit():
+                padded_num = req_num.zfill(4)
+                queryset = queryset.filter(request_number__icontains=padded_num)
+            else:
+                queryset = queryset.filter(request_number__icontains=req_num)
 
         if status_id and status_id.isdigit():
             queryset = queryset.filter(status_id=int(status_id))
@@ -78,9 +86,11 @@ class RequestCreateView(LoginRequiredMixin, CreateView):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        form.instance.responsible = self.request.user
-        return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['institution_mapping'] = list(Institution.objects.values('id', 'region_id'))
+        return context
+
 
 
 class RequestUpdateView(LoginRequiredMixin, UpdateView):
@@ -97,6 +107,11 @@ class RequestUpdateView(LoginRequiredMixin, UpdateView):
                 return redirect('requests:list')
 
         return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['institution_mapping'] = list(Institution.objects.values('id', 'region_id'))
+        return context
 
     def get_form_class(self):
         if self.request.user.role == User.Role.USER:

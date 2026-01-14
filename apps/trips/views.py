@@ -33,6 +33,7 @@ class TripListView(LoginRequiredMixin, ListView):
 
         q = self.request.GET.get('q')
         status_id = self.request.GET.get('status')
+        req_num = self.request.GET.get('req_num')
 
         if q:
             queryset = queryset.filter(
@@ -41,6 +42,13 @@ class TripListView(LoginRequiredMixin, ListView):
                 Q(responsible__full_name__icontains=q) |
                 Q(escort_name__icontains=q)
             )
+
+        if req_num:
+            if req_num.isdigit():
+                padded_num = req_num.zfill(4)
+                queryset = queryset.filter(request_number__icontains=padded_num)
+            else:
+                queryset = queryset.filter(request_number__icontains=req_num)
         
         if status_id:
             queryset = queryset.filter(status_id=status_id)
@@ -68,6 +76,11 @@ class TripCreateView(LoginRequiredMixin, CreateView):
             return redirect('trips:list')
         return super().dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['institution_mapping'] = list(Institution.objects.values('id', 'region_id'))
+        return context
+
 class TripUpdateView(LoginRequiredMixin, UpdateView):
     model = Trip
     template_name = 'trips/form.html'
@@ -85,6 +98,14 @@ class TripUpdateView(LoginRequiredMixin, UpdateView):
         if self.request.user.role == User.Role.USER:
             return TripStatusForm
         return TripForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['institution_mapping'] = list(Institution.objects.values('id', 'region_id'))
+        # Carry over original context if it exists (Status is used in trip detail/update?)
+        # Base class ListView for statuses is in TripListView, not update.
+        # But TripListView has context['statuses']
+        return context
 
 
 import openpyxl
