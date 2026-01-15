@@ -84,12 +84,23 @@
             </div>
         </div>
 
-        <div style="margin-top: 30px; text-align: right;">
-            <a href="{% url 'trips:list' %}" class="btn-primary"
-                style="background-color: #6c757d; border-color: #6c757d; margin-right: 15px;">
-                {% trans "Cancel" %}
+
+        <div style="margin-top: 30px; display: flex; justify-content: space-between; align-items: center;">
+            {% if form.instance.pk %}
+            <a href="{% url 'trips:download_docx' form.instance.pk %}" class="btn-primary" 
+                style="text-decoration: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                📥 {% trans "Download DOCX" %}
             </a>
-            <button type="submit" class="btn-primary">{% trans "Save" %}</button>
+            {% else %}
+            <div></div>
+            {% endif %}
+            <div>
+                <a href="{% url 'trips:list' %}" class="btn-primary"
+                    style="background-color: #6c757d; border-color: #6c757d; margin-right: 15px;">
+                    {% trans "Cancel" %}
+                </a>
+                <button type="submit" class="btn-primary">{% trans "Save" %}</button>
+            </div>
         </div>
     </form>
 </div>

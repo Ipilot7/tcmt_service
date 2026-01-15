@@ -8,13 +8,14 @@
     <form method="get"
         style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; align-items: end;">
         <div>
-            <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 5px;">{% trans "Employee"
-                %}</label>
+            <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 5px;">
+                {% trans "Employee" %}
+            </label>
             <select name="user_id"
                 style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white;">
                 <option value="">{% trans "All Employees" %}</option>
                 {% for u in users %}
-                <option value="{{ u.pk }}" {% if selected_user==u.pk %}selected{% endif %}>
+                <option value="{{ u.pk }}" {% if selected_user == u.pk %}selected{% endif %}>
                     {{ u.full_name }} ({{ u.username }})
                 </option>
                 {% endfor %}
@@ -22,22 +23,25 @@
         </div>
 
         <div>
-            <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 5px;">{% trans "Start Date"
-                %}</label>
+            <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 5px;">
+                {% trans "Start Date" %}
+            </label>
             <input type="date" name="start_date" value="{{ start_date }}"
                 style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white;">
         </div>
 
         <div>
-            <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 5px;">{% trans "End Date"
-                %}</label>
+            <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 5px;">
+                {% trans "End Date" %}
+            </label>
             <input type="date" name="end_date" value="{{ end_date }}"
                 style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white;">
         </div>
 
         <div>
-            <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 5px;">{% trans "Request Number"
-                %}</label>
+            <label style="display: block; color: rgba(255,255,255,0.7); margin-bottom: 5px;">
+                {% trans "Request Number" %}
+            </label>
             <input type="text" name="req_num" value="{{ req_num|default:'' }}" placeholder="{% trans 'e.g. 0009' %}"
                 style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white;">
         </div>
@@ -85,8 +89,9 @@
 
         <!-- Requests List -->
         <div>
-            <h3 style="color: white; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;">📋 {% trans
-                "Requests List" %}</h3>
+            <h3 style="color: white; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;">
+                📋 {% trans "Requests List" %}
+            </h3>
             <table>
                 <thead>
                     <tr>
@@ -110,8 +115,9 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4" style="text-align: center; color: rgba(255,255,255,0.5);">{% trans "No requests
-                            found" %}</td>
+                        <td colspan="4" style="text-align: center; color: rgba(255,255,255,0.5);">
+                            {% trans "No requests found" %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -120,8 +126,9 @@
 
         <!-- Trips List -->
         <div>
-            <h3 style="color: white; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;">✈️ {% trans
-                "Trips List" %}</h3>
+            <h3 style="color: white; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;">
+                ✈️ {% trans "Trips List" %}
+            </h3>
             <table>
                 <thead>
                     <tr>
@@ -145,8 +152,9 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4" style="text-align: center; color: rgba(255,255,255,0.5);">{% trans "No trips
-                            found" %}</td>
+                        <td colspan="4" style="text-align: center; color: rgba(255,255,255,0.5);">
+                            {% trans "No trips found" %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

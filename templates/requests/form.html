@@ -71,8 +71,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const regionSelect = document.querySelector('select[name="region"]');
         const institutionSelect = document.querySelector('select[name="institution"]');
-        const institutionMapping = {{ institution_mapping|default: "[]" | safe
-    }};
+        const institutionMapping = {{ institution_mapping|default: "[]" | safe }};
 
     // --- 1. Filter Institutions by Region ---
     regionSelect.addEventListener('change', function () {

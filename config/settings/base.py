@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.requests',
     'apps.trips',
-    'apps.dashboard',   
+    'apps.dashboard',
+    'apps.docs',
 ]
 
 MIDDLEWARE = [
