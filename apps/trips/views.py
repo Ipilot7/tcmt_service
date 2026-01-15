@@ -268,9 +268,9 @@ def download_trip_docx(request, pk):
     document = Document(template_path)
 
     replacements = {
-        "{{ESCORT_NAME}}": trip.escort_name or "",
+        "{{ESCORT_NAME}}": trip.responsible.full_name or "",
         "{{INSTITUTION_NAME}}": trip.institution.name if trip.institution else "",
-        "{{PASSPORT}}": "",
+        "{{PASSPORT}}": trip.responsible.passport or "",
     }
     
     for p in document.paragraphs:
