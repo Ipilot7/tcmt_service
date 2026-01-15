@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from .models import Trip
 from .forms import TripForm, TripStatusForm
 from apps.users.models import User
-
+from django.conf import settings
 from django.db.models import Q
 from apps.core.models import Status
 
@@ -110,9 +110,12 @@ class TripUpdateView(LoginRequiredMixin, UpdateView):
 
 import openpyxl
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from apps.core.models import Region, Institution, EquipmentType, Status
+from docx import Document
+from docx.shared import Pt, Inches
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 def export_trips_to_excel(request):
     """
@@ -213,3 +216,79 @@ def import_trips_from_excel(request):
         return redirect('trips:list')
 
     return render(request, 'common/import_form.html')
+
+
+# def download_trip_docx(request, pk):
+#     """
+#     Download a single trip as a DOCX file.
+#     """
+#     trip = get_object_or_404(Trip, pk=pk)
+#     with open(settings.BASE_DIR / 'templates/docs/trip_template.docx', 'rb') as f:
+#         document = Document(f)
+#     replacements = {
+#         "{{ESCORT_NAME}}": trip.escort_name,
+#         "{{INSTITUTION_NAME}}": trip.institution.name,
+#         "{{PASSPORT}}": ""
+#     }
+#     for paragraph in document.paragraphs:
+#         for key, value in replacements.items():
+#             if key in paragraph.text:
+#                 paragraph.text = paragraph.text.replace(key, value)
+#     document.save(response)
+#     response = HttpResponse(
+#         content_type=(
+#             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+#         )
+#     )
+#     response["Content-Disposition"] = (
+#         f'attachment; filename="trip_{trip.id}.docx"'
+#     )
+#     return response
+def replace_in_paragraph(paragraph, replacements):
+    full_text = ''.join(run.text for run in paragraph.runs)
+
+    for key, value in replacements.items():
+        if key in full_text:
+            full_text = full_text.replace(key, value)
+
+            # clear existing runs
+            for run in paragraph.runs:
+                run.text = ""
+
+            # put text into first run (keeps its style)
+            paragraph.runs[0].text = full_text
+
+def download_trip_docx(request, pk):
+    """
+    Download a single trip as a DOCX file.
+    """
+    trip = get_object_or_404(Trip, pk=pk)
+
+    template_path = settings.BASE_DIR / 'templates/docs/trip_template.docx'
+    document = Document(template_path)
+
+    replacements = {
+        "{{ESCORT_NAME}}": trip.escort_name or "",
+        "{{INSTITUTION_NAME}}": trip.institution.name if trip.institution else "",
+        "{{PASSPORT}}": "",
+    }
+    
+    for p in document.paragraphs:
+        replace_in_paragraph(p, replacements)
+
+    for table in document.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for p in cell.paragraphs:
+                    replace_in_paragraph(p, replacements)
+    response = HttpResponse(
+        content_type=(
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="trip_{trip.id}.docx"'
+    )
+
+    document.save(response)
+    return response

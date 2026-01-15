@@ -5,9 +5,12 @@
 <div class="glass-container" style="max-width: 800px; margin: 0 auto;">
     <div style="display: flex; justify-content: space-between; align-items: start;">
         <div>
-            <h2 style="color: white; margin: 0;">{% trans "Request" %} {{ request_obj.request_number }}</h2>
-            <p style="color: rgba(255,255,255,0.7); margin-top: 5px;">{% trans "from" %} {{
-                request_obj.created_at|date:"d.m.Y" }}</p>
+            <h2 style="color: white; margin: 0;">
+                {% trans "Request" %} {{ request_obj.request_number }}
+            </h2>
+            <p style="color: rgba(255,255,255,0.7); margin-top: 5px;">
+                {% trans "from" %} {{ request_obj.created_at|date:"d.m.Y" }}
+            </p>
         </div>
         <div style="text-align: right;">
             <span style="background: white; color: #333; padding: 5px 10px; border-radius: 15px; font-weight: bold;">
@@ -20,23 +23,38 @@
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
         <div>
-            <h4 style="color: rgba(255,255,255,0.7); margin-bottom: 10px;">{% trans "Location" %}</h4>
-            <p style="margin: 5px 0;"><strong>{% trans "Region:" %}</strong> {{ request_obj.region.name }}</p>
-            <p style="margin: 5px 0;"><strong>{% trans "Institution:" %}</strong> {{ request_obj.institution.name }}</p>
-
-            <h4 style="color: rgba(255,255,255,0.7); margin-bottom: 10px; margin-top: 20px;">{% trans "Equipment" %}
+            <h4 style="color: rgba(255,255,255,0.7); margin-bottom: 10px;">
+                {% trans "Location" %}
             </h4>
-            <p style="margin: 5px 0;"><strong>{% trans "Type:" %}</strong> {{ request_obj.equipment_type.name }}</p>
+            <p style="margin: 5px 0;">
+                <strong>{% trans "Region:" %}</strong> {{ request_obj.region.name }}
+            </p>
+            <p style="margin: 5px 0;">
+                <strong>{% trans "Institution:" %}</strong> {{ request_obj.institution.name }}
+            </p>
+
+            <h4 style="color: rgba(255,255,255,0.7); margin-bottom: 10px; margin-top: 20px;">
+                {% trans "Equipment" %}
+            </h4>
+            <p style="margin: 5px 0;">
+                <strong>{% trans "Type:" %}</strong> {{ request_obj.equipment_type.name }}
+            </p>
         </div>
         <div>
-            <h4 style="color: rgba(255,255,255,0.7); margin-bottom: 10px;">{% trans "Contact" %}</h4>
-            <p style="margin: 5px 0;"><strong>{% trans "Phone:" %}</strong> {{ request_obj.contact_phone }}</p>
-            <p style="margin: 5px 0;"><strong>{% trans "Responsible:" %}</strong> {{ request_obj.responsible.full_name
-                }}</p>
+            <h4 style="color: rgba(255,255,255,0.7); margin-bottom: 10px;">
+                {% trans "Contact" %}
+            </h4>
+            <p style="margin: 5px 0;">
+                <strong>{% trans "Phone:" %}</strong> {{ request_obj.contact_phone }}
+            </p>
+            <p style="margin: 5px 0;">
+                <strong>{% trans "Responsible:" %}</strong> {{ request_obj.responsible.full_name }}
+            </p>
         </div>
     </div>
 
-    <h4 style="color: rgba(255,255,255,0.7); margin-bottom: 10px; margin-top: 20px;">{% trans "Problem Description" %}
+    <h4 style="color: rgba(255,255,255,0.7); margin-bottom: 10px; margin-top: 20px;">
+        {% trans "Problem Description" %}
     </h4>
     <div
         style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.1);">
@@ -44,11 +62,14 @@
     </div>
 
     <div style="margin-top: 30px; text-align: right;">
-        <a href="{% url 'requests:list' %}" class="btn-primary" style="text-decoration: none;">{% trans "Back to list"
-            %}</a>
+        <a href="{% url 'requests:list' %}" class="btn-primary" style="text-decoration: none;">
+            {% trans "Back to list" %}
+        </a>
         {% if user.role != 'user' %}
         <a href="{% url 'requests:update' request_obj.pk %}" class="btn-primary"
-            style="text-decoration: none; margin-left: 10px;">{% trans "Edit" %}</a>
+            style="text-decoration: none; margin-left: 10px;">
+            {% trans "Edit" %}
+        </a>
         {% endif %}
     </div>
 </div>

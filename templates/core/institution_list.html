@@ -4,8 +4,12 @@
 {% block content %}
 <div class="glass-container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="color: white; margin: 0;">🏥 {% trans "Institutions" %}</h2>
-        <a href="{% url 'core:institution_create' %}" class="btn-primary">➕ {% trans "Create Institution" %}</a>
+        <h2 style="color: white; margin: 0;">
+            🏥 {% trans "Institutions" %}
+        </h2>
+        <a href="{% url 'core:institution_create' %}" class="btn-primary">
+            ➕ {% trans "Create Institution" %}
+        </a>
     </div>
 
     <table>
@@ -22,12 +26,16 @@
                 <td>{{ inst.name }}</td>
                 <td>{{ inst.region.name }}</td>
                 <td>
-                    <a href="{% url 'core:institution_update' inst.pk %}" style="color: #007bff;">{% trans "Edit" %}</a>
+                    <a href="{% url 'core:institution_update' inst.pk %}" style="color: #007bff;">
+                        {% trans "Edit" %}
+                    </a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="3" style="text-align: center; color: rgba(255,255,255,0.5);">{% trans "No institutions found" %}</td>
+                <td colspan="3" style="text-align: center; color: rgba(255,255,255,0.5);">
+                    {% trans "No institutions found" %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
