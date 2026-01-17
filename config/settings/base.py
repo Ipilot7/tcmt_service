@@ -157,3 +157,6 @@ STATICFILES_DIRS = [
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_URL = '/auth/login/'
 LOGOUT_REDIRECT_URL = '/auth/login/'
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.ngrok-free.dev",
+]
