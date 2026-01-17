@@ -14,7 +14,7 @@
     <div class="app-container">
         {% if user.is_authenticated %}
         <aside class="sidebar">
-            <h2 style="color: white !important; border-bottom: 1px solid rgba(255,255,255,0.1);">TCMT Service</h2>
+            <h2 style="color: white !important; border-bottom: 1px solid rgba(255,255,255,0.1);"> "TCMT Service </h2>
             <nav>
                 <a href="{% url 'index' %}">🧭 {% trans "Dashboard" %}</a>
                 <a href="{% url 'requests:list' %}">📋 {% trans "Requests" %}</a>

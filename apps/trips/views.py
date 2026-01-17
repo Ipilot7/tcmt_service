@@ -117,6 +117,8 @@ from docx import Document
 from docx.shared import Pt, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
+from django.utils.translation import gettext as _
+
 def export_trips_to_excel(request):
     """
     Export all trips to an Excel file.
@@ -131,13 +133,13 @@ def export_trips_to_excel(request):
 
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
-    worksheet.title = 'Trips'
+    worksheet.title = _('Trips')
 
     # Header row
     columns = [
-        'Trip Number', 'Created At', 'Region', 'Institution',
-        'Equipment Type', 'Status', 'Responsible', 'Contact Phone', 
-        'Description', 'Escort Name', 'Escort Phone', 'Order Number', 'Result'
+        _('Trip Number'), _('Created At'), _('Region'), _('Institution'),
+        _('Equipment Type'), _('Status'), _('Responsible'), _('Contact Phone'), 
+        _('Description'), _('Escort Name'), _('Escort Phone'), _('Order Number'), _('Result')
     ]
     worksheet.append(columns)
 

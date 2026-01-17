@@ -124,6 +124,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from apps.core.models import Region, Institution, EquipmentType
 
+from django.utils.translation import gettext as _
+
 def export_requests_to_excel(request):
     """
     Export all requests to an Excel file.
@@ -138,12 +140,12 @@ def export_requests_to_excel(request):
 
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
-    worksheet.title = 'Requests'
+    worksheet.title = _('Requests')
 
     # Header row
     columns = [
-        'Request Number', 'Created At', 'Region', 'Institution',
-        'Equipment Type', 'Status', 'Responsible', 'Contact Phone', 'Description'
+        _('Request Number'), _('Created At'), _('Region'), _('Institution'),
+        _('Equipment Type'), _('Status'), _('Responsible'), _('Contact Phone'), _('Description')
     ]
     worksheet.append(columns)
 
