@@ -3,7 +3,8 @@ from .base import *
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "195.158.30.56"
+    "195.158.30.56",
+    "192.168.0.79"
 ]
 
 # Database
