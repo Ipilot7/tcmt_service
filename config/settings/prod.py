@@ -2,7 +2,9 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "195.158.30.56"
+]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
