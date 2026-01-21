@@ -20,3 +20,4 @@ tqdm==4.67.1
 typing_extensions==4.15.0
 tzdata==2025.3
 docx
+gunicorn

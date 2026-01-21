@@ -3,12 +3,23 @@ from .base import *
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "195.158.30.56",
-    "192.168.0.79"
+    "192.168.0.79",
+    "service.deepfocus.uz",
+    "localhost",
+    "127.0.0.1"
 ]
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+# Security Settings
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# CSRF Trusted Origins
+CSRF_TRUSTED_ORIGINS = [
+    "https://service.deepfocus.uz",  # Update with your actual domain
+]
+
 
 DATABASES = {
     'default': {
