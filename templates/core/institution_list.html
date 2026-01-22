@@ -17,16 +17,28 @@
             <tr>
                 <th>{% trans "Name" %}</th>
                 <th>{% trans "Region" %}</th>
+                <th>{% trans "Sale Date" %}</th>
+                <th>{% trans "Warranty" %}</th>
+                <th>{% trans "Equipments" %}</th>
                 <th>{% trans "Actions" %}</th>
             </tr>
         </thead>
         <tbody>
-            {% for inst in institutions %}
+            {% for inst in institutions_serialized %}
             <tr>
                 <td>{{ inst.name }}</td>
-                <td>{{ inst.region.name }}</td>
+                <td>{{ inst.region_name }}</td>
+                <td>{{ inst.sale_date|default:"-" }}</td>
                 <td>
-                    <a href="{% url 'core:institution_update' inst.pk %}" style="color: #007bff;">
+                    {% if inst.is_under_warranty %}
+                    <span style="color: #51cf66;">✅ {{ inst.warranty_end }}</span>
+                    {% else %}
+                    <span style="color: #ff6b6b;">❌ {{ inst.warranty_end|default:"-" }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ inst.equipments|length }}</td>
+                <td>
+                    <a href="{% url 'core:institution_update' inst.id %}" style="color: #007bff;">
                         {% trans "Edit" %}
                     </a>
                 </td>

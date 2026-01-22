@@ -10,14 +10,10 @@ from .forms import RequestForm, RequestStatusForm
 from apps.users.models import User
 from apps.core.models import Status
 
-
 # 🔒 Статусы, при которых обычный User не может редактировать
 CLOSED_STATUSES = [
-    'Выполнено',
-    'Закрыто',
-    'Отменено',
-    'Completed',
-    'Closed',
+    Status.Name.SUCCESS,
+    Status.Name.CANCELED,
 ]
 
 

@@ -44,7 +44,7 @@ def statistics(request):
 
     # Calculate Stats
     # Assuming 'Done' statuses. You might want to adjust this list.
-    done_statuses = ['Выполнено', 'Закрыто', 'Completed', 'Closed']
+    done_statuses = [Status.Name.SUCCESS]
 
     req_total = req_qs.count()
     req_done = req_qs.filter(status__name__in=done_statuses).count()
@@ -92,7 +92,7 @@ def user_statistics(request):
     else:
         end_dt = datetime.strptime(end_date_str, '%Y-%m-%d')
 
-    done_statuses = ['Выполнено', 'Закрыто', 'Completed', 'Closed']
+    done_statuses = [Status.Name.SUCCESS]
 
     for u in users:
         req_total = Request.objects.filter(responsible=u, created_at__range=[start_dt, end_dt]).count()

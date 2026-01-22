@@ -10,11 +10,8 @@ from django.db.models import Q
 from apps.core.models import Status
 
 CLOSED_STATUSES = [
-    'Выполнено',
-    'Закрыто',
-    'Отменено',
-    'Completed',
-    'Closed',
+    Status.Name.SUCCESS,
+    Status.Name.CANCELED,
 ]
 
 class TripListView(LoginRequiredMixin, ListView):
@@ -89,8 +86,7 @@ class TripUpdateView(LoginRequiredMixin, UpdateView):
     def dispatch(self, request, *args, **kwargs):
         obj = self.get_object()
         if request.user.role == User.Role.USER:
-            closed_statuses = ['Выполнено', 'Закрыто', 'Отменено', 'Completed', 'Closed']
-            if obj.status.name in closed_statuses:
+            if obj.status.name in CLOSED_STATUSES:
                 return redirect('trips:list')
         return super().dispatch(request, *args, **kwargs)
 

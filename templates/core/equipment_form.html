@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="glass-container">
+    <h2 style="color: white; margin-bottom: 20px;">
+        {% if object %}
+        ⚙️ {% trans "Edit Equipment" %}: {{ object }}
+        {% else %}
+        ⚙️ {% trans "Create Equipment" %}
+        {% endif %}
+    </h2>
+
+    <form method="post" class="form-grid" style="max-width: 600px;">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label style="color: rgba(255,255,255,0.7);">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div style="color: #ff6b6b; font-size: 0.8em; margin-top: 5px;">
+                {{ field.errors }}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button type="submit" class="btn-primary">💾 {% trans "Save" %}</button>
+            <a href="{% url 'core:equipment_list' %}" class="btn-secondary"
+                style="text-decoration: none; padding: 10px 20px; border-radius: 5px; background: rgba(255,255,255,0.1); color: white;">❌
+                {% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(0, 0, 0, 0.2);
+        color: white;
+    }
+</style>
+{% endblock %}
