@@ -1,13 +1,8 @@
 from .base import *
 
-DEBUG = False
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = [
-    "192.168.0.79",
-    "service.deepfocus.uz",
-    "localhost",
-    "127.0.0.1"
-]
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 # Security Settings
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -17,14 +12,16 @@ CSRF_COOKIE_SECURE = True
 # APPEND_SLASH = True
 
 # CSRF Trusted Origins
-CSRF_TRUSTED_ORIGINS = [
-    "https://service.deepfocus.uz",  # Update with your actual domain
-]
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
 
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': env('DB_ENGINE'),
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     }
 }
