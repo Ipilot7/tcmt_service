@@ -6,7 +6,7 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'full_name', 'passport', 'role', 'password', 'is_active']
+        fields = ['username', 'full_name', 'phone', 'passport', 'role', 'password', 'is_active']
 
     def __init__(self, *args, **kwargs):
         self.current_user = kwargs.pop('current_user', None)

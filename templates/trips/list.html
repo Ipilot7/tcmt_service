@@ -4,7 +4,7 @@
 {% block content %}
 <div class="glass-container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="color: white; margin: 0;">✈️ {% trans "Trips" %}</h2>
+        <h2 style="color: var(--text-primary); margin: 0;">✈️ {% trans "Trips" %}</h2>
         {% if user.role != 'user' %}
         <div style="display: flex; gap: 10px;">
             <a href="{% url 'trips:import' %}" class="btn-primary"
@@ -91,9 +91,9 @@
                     {% if user.role == 'user' and trip.status.name in closed_statuses %}
                     <span style="opacity: 0.3; margin-right: 10px;">🔒</span>
                     {% else %}
-                    <a href="{% url 'trips:update' trip.pk %}" style="color: white; margin-right: 10px;">✏️</a>
+                    <a href="{% url 'trips:update' trip.pk %}" style="color: var(--primary-color); margin-right: 10px;">✏️</a>
                     {% endif %}
-                    <a href="{% url 'trips:detail' trip.pk %}" style="color: white;">👁️</a>
+                    <a href="{% url 'trips:detail' trip.pk %}" style="color: var(--primary-color);">👁️</a>
                 </td>
             </tr>
             {% empty %}

@@ -50,6 +50,7 @@
                     <input name="next" type="hidden" value="{{ request.path }}">
                     <select name="language" onchange="this.form.submit()"
                         style="width: 100%; padding: 5px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px;">
+                        <option value="" disabled selected>{% trans "Select Language" %}</option>
                         {% get_current_language as LANGUAGE_CODE %}
                         {% get_available_languages as LANGUAGES %}
                         {% get_language_info_list for LANGUAGES as languages %}
