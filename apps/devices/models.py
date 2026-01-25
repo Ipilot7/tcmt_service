@@ -15,7 +15,7 @@ class DeviceType(models.Model):
 
 class Device(models.Model):
     serial_number = models.CharField(max_length=255, unique=True)
-    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='devices')
+    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='devices', null=True, blank=True)
     device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE, related_name='devices')
 
     class Meta:
