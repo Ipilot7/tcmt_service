@@ -18,9 +18,8 @@ class UserCreationForm(BaseUserCreationForm):
         user = super().save(commit=False)
         if commit:
             user.save()
-        if user.pk:
-            user.roles.set(self.cleaned_data['roles'])
-            self.save_m2m()
+            if self.cleaned_data.get('roles'):
+                user.roles.set(self.cleaned_data['roles'])
         return user
 
 class UserChangeForm(BaseUserChangeForm):
@@ -44,7 +43,5 @@ class UserChangeForm(BaseUserChangeForm):
         user = super().save(commit=False)
         if commit:
             user.save()
-        if user.pk:
             user.roles.set(self.cleaned_data['roles'])
-            self.save_m2m()
         return user
