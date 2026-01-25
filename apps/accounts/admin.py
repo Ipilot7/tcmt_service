@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User, Role, Permission
+from .forms import UserCreationForm, UserChangeForm
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
@@ -10,17 +11,19 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ('login', 'fullname', 'psn')
     ordering = ('fullname',)
 
+    form = UserChangeForm
+    add_form = UserCreationForm
+
     fieldsets = (
         (None, {'fields': ('login', 'password')}),
         ('Личные данные', {'fields': ('fullname', 'psn')}),
-        ('Права', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
+        ('Права', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
     )
 
-    # Это решит проблему "Add User"
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('login', 'fullname', 'psn', 'password'),
+            'fields': ('login', 'fullname', 'psn', 'password', 'roles'),
         }),
     )
 

@@ -54,8 +54,12 @@ INSTALLED_APPS = [
 ]
 
 # DRF configuration
+# DRF configuration
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
 }
 
 MIDDLEWARE = [
@@ -135,10 +139,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
+
 AUTH_USER_MODEL = 'accounts.User'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
