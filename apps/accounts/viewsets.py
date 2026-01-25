@@ -2,8 +2,8 @@ from rest_framework import viewsets
 from .models import User, Role, Permission
 from .serializers import UserSerializer, RoleSerializer, PermissionSerializer
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all()
+class UserViewSet(viewsets.ModelViewSet): # Изменили на ModelViewSet
+    queryset = User.objects.prefetch_related('roles').all()
     serializer_class = UserSerializer
 
 class RoleViewSet(viewsets.ReadOnlyModelViewSet):
