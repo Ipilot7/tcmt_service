@@ -1,15 +1,7 @@
 from rest_framework import viewsets
-from .models import Task, TaskStatus, TaskResponsible
-from .serializers import TaskSerializer, TaskStatusSerializer, TaskResponsibleSerializer
+from .models import Task
+from .serializers import TaskSerializer
 
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.select_related('hospital', 'device_type').all()
+    queryset = Task.objects.select_related('hospital', 'device_type', 'responsible_person').all()
     serializer_class = TaskSerializer
-
-class TaskStatusViewSet(viewsets.ModelViewSet):
-    queryset = TaskStatus.objects.select_related('task', 'status').all()
-    serializer_class = TaskStatusSerializer
-
-class TaskResponsibleViewSet(viewsets.ModelViewSet):
-    queryset = TaskResponsible.objects.select_related('task', 'user').all()
-    serializer_class = TaskResponsibleSerializer
