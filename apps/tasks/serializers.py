@@ -12,7 +12,7 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'hospital', 'device_type', 'task_number', 
             'description', 'status', 'status_display', 
-            'responsible_person', 'created_at'
+            'responsible_person', 'task_date', 'created_at'
         ]
         read_only_fields = ['task_number', 'created_at']
 

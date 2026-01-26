@@ -23,6 +23,7 @@ class Task(models.Model):
         null=True,
         blank=True
     )
+    task_date = models.DateField(null=True, blank=True)
     created_at = models.DateField(auto_now_add=True, db_index=True)
 
     class Meta:
