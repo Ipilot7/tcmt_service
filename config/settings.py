@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     # Shared
     'apps.core',
     'apps.accounts',
@@ -55,14 +56,23 @@ INSTALLED_APPS = [
     'apps.trips',
 ]
 
-# DRF configuration
-# DRF configuration
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'TCMT Service API',
+    'DESCRIPTION': 'API for Medical Equipment Management',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # Remove prefix restriction to include all paths
+    'SCHEMA_PATH_PREFIX': None,
+}
+
+
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),

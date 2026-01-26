@@ -4,7 +4,7 @@ from .models import User, Role, Permission
 class UserSerializer(serializers.ModelSerializer):
     # Поле для принятия ID ролей при создании/обновлении
     role_ids = serializers.PrimaryKeyRelatedField(
-        many=True, write_only=True, queryset=Role.objects.all(), source='roles'
+        many=True, write_only=True, queryset=Role.objects.all(), source='roles', required=False
     )
     
     class Meta:
@@ -20,8 +20,16 @@ class UserSerializer(serializers.ModelSerializer):
         roles = validated_data.pop('roles', [])
         # Создаем пользователя через менеджер для хеширования пароля
         user = User.objects.create_user(**validated_data)
+        
+        # Если роли не переданы, назначаем роль по умолчанию 'user'
+        if not roles:
+            default_role = Role.objects.filter(name='user').first()
+            if default_role:
+                roles = [default_role]
+        
         # Устанавливаем связи ManyToMany
-        user.roles.set(roles)
+        if roles:
+            user.roles.set(roles)
         return user
 
 

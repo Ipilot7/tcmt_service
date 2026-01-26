@@ -37,6 +37,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/logout/', accounts_viewsets.LogoutView.as_view(), name='logout'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair_root'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh_root'),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
