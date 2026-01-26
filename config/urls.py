@@ -15,19 +15,19 @@ TokenObtainPairView = extend_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     
-    # API endpoints from apps
-    path('api/accounts/', include('apps.accounts.urls')),
-    path('api/core/', include('apps.core.urls')),
-    path('api/devices/', include('apps.devices.urls')),
-    path('api/locations/', include('apps.locations.urls')),
-    path('api/tasks/', include('apps.tasks.urls')),
-    path('api/trips/', include('apps.trips.urls')),
+    # API endpoints from apps (flat structure)
+    path('api/', include('apps.accounts.urls')),
+    path('api/', include('apps.core.urls')),
+    path('api/', include('apps.devices.urls')),
+    path('api/', include('apps.locations.urls')),
+    path('api/', include('apps.tasks.urls')),
+    path('api/', include('apps.trips.urls')),
 
     # JWT Authentication
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
-    # Root redirects or common paths (optional)
+    # Root redirects for backward compatibility
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair_root'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh_root'),
 
