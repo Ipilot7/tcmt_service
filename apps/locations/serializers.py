@@ -5,12 +5,12 @@ class RegionSerializer(serializers.ModelSerializer):
         model = Region
         fields = ['id', 'name']
 class HospitalSerializer(serializers.ModelSerializer):
-    region = RegionSerializer(read_only=True)
+    region_info = RegionSerializer(source='region', read_only=True)
     class Meta:
         model = Hospital
-        fields = ['id', 'name', 'lat', 'long', 'region']
+        fields = ['id', 'name', 'lat', 'long', 'region', 'region_info']
 class HospitalMaintenanceSerializer(serializers.ModelSerializer):
-    hospital = HospitalSerializer(read_only=True)
+    hospital_info = HospitalSerializer(source='hospital', read_only=True)
     class Meta:
         model = HospitalMaintenance
-        fields = ['id', 'hospital', 'maintenance_date']
+        fields = ['id', 'hospital', 'hospital_info', 'maintenance_date']

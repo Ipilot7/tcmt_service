@@ -6,7 +6,8 @@ class DeviceTypeSerializer(serializers.ModelSerializer):
         model = DeviceType
         fields = ['id', 'name']
 class DeviceSerializer(serializers.ModelSerializer):
-    device_type = DeviceTypeSerializer(read_only=True)
+    device_type_info = DeviceTypeSerializer(source='device_type', read_only=True)
+    
     class Meta:
         model = Device
-        fields = ['id', 'serial_number', 'hospital', 'device_type']
+        fields = ['id', 'serial_number', 'hospital', 'device_type', 'device_type_info']
