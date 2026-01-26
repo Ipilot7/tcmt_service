@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -14,6 +14,8 @@ class UserViewSet(viewsets.ModelViewSet): # Изменили на ModelViewSet
     queryset = User.objects.prefetch_related('roles').all()
     serializer_class = UserSerializer
     permission_classes = [IsAdminOrManager]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['fullname', 'login', 'psn']
 
 class RoleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Role.objects.prefetch_related('users').all()
