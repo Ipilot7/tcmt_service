@@ -5,3 +5,4 @@ class StatusChoices(models.TextChoices):
     PENDING = 'PD', 'Pending'
     COMPLETED = 'CP', 'Completed'
     CANCELED = 'CN', 'Canceled'
+    ON_HOLD = 'OH', 'On Hold'
