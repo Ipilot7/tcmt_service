@@ -37,10 +37,13 @@ class TaskViewSet(viewsets.ModelViewSet):
         columns = [
             ('ID', 'id'),
             ('Номер задачи', 'task_number'),
+            ('ID Больницы', 'hospital_id'),
             ('Больница', 'hospital.name'),
+            ('ID Типа оборудования', 'device_type_id'),
             ('Тип оборудования', 'device_type.name'),
             ('Описание', 'description'),
             ('Статус', 'status'),
+            ('ID Ответственного', 'responsible_person_id'),
             ('Ответственный', 'responsible_person.fullname'),
             ('Дата задачи', 'task_date'),
             ('Дата создания', 'created_at'),

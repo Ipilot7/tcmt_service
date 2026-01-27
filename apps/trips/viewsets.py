@@ -32,14 +32,17 @@ class TripViewSet(viewsets.ModelViewSet):
         columns = [
             ('ID', 'id'),
             ('Номер задания', 'task_number'),
+            ('ID Больницы', 'hospital_id'),
             ('Больница', 'hospital.name'),
+            ('ID Типа оборудования', 'device_type_id'),
             ('Тип оборудования', 'device_type.name'),
             ('Описание', 'description'),
             ('Телефон', 'contact_phone'),
             ('Дата поездки', 'trip_date'),
+            ('ID Ответственного', 'responsible_person_id'),
+            ('Ответственный', 'responsible_person.fullname'),
             ('Номер заказа', 'order_number'),
             ('Статус', 'status'),
-            ('Ответственный', 'responsible_person.fullname'),
             ('Дата создания', 'created_at'),
         ]
         relative_path = export_to_excel(queryset, columns, "trips")
