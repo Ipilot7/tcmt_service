@@ -1665,6 +1665,20 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/users/me/:
+    get:
+      operationId: api_users_me_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
   /token/:
     post:
       operationId: token_create
