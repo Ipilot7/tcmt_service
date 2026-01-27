@@ -16,10 +16,13 @@ class UserCreationForm(BaseUserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        if commit:
-            user.save()
+        def save_m2m():
             if self.cleaned_data.get('roles'):
                 user.roles.set(self.cleaned_data['roles'])
+        self.save_m2m = save_m2m
+        if commit:
+            user.save()
+            save_m2m()
         return user
 
 class UserChangeForm(BaseUserChangeForm):
@@ -41,7 +44,11 @@ class UserChangeForm(BaseUserChangeForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        def save_m2m():
+            if 'roles' in self.cleaned_data:
+                user.roles.set(self.cleaned_data['roles'])
+        self.save_m2m = save_m2m
         if commit:
             user.save()
-            user.roles.set(self.cleaned_data['roles'])
+            save_m2m()
         return user
