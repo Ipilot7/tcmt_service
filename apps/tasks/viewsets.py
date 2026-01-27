@@ -1,10 +1,13 @@
+from datetime import datetime
 from django.db.models import Count
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, inline_serializer
+from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiParameter
 from rest_framework import serializers
+from apps.core.excel_service import export_to_excel, parse_excel_file
 from apps.core.choices import StatusChoices
 from .models import Task
 from .serializers import TaskSerializer
@@ -16,6 +19,72 @@ class TaskViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = TaskFilter
     search_fields = ['task_number', 'description', 'hospital__name']
+
+    @extend_schema(
+        responses={200: OpenApiParameter(name='file', type=bytes, location='query', description='Excel file')}
+    )
+    @action(detail=False, methods=['get'])
+    def export_excel(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        columns = [
+            ('ID', 'id'),
+            ('Номер задачи', 'task_number'),
+            ('Больница', 'hospital.name'),
+            ('Тип оборудования', 'device_type.name'),
+            ('Описание', 'description'),
+            ('Статус', 'status'),
+            ('Ответственный', 'responsible_person.fullname'),
+            ('Дата задачи', 'task_date'),
+            ('Дата создания', 'created_at'),
+        ]
+        return export_to_excel(queryset, columns, "tasks")
+
+    @extend_schema(
+        request={
+            'multipart/form-data': inline_serializer(
+                name='TaskImportSerializer',
+                fields={'file': serializers.FileField()}
+            )
+        },
+        responses={201: inline_serializer(name='ImportResponse', fields={'count': serializers.IntegerField()})}
+    )
+    @action(detail=False, methods=['post'])
+    def import_excel(self, request):
+        file = request.FILES.get('file')
+        if not file:
+            return Response({"error": "No file uploaded"}, status=400)
+
+        column_map = {
+            'ID Больницы': 'hospital_id',
+            'ID Типа оборудования': 'device_type_id',
+            'Описание': 'description',
+            'Статус': 'status',
+            'ID Ответственного': 'responsible_person_id',
+            'Дата задачи': 'task_date',
+        }
+        
+        try:
+            data = parse_excel_file(file, column_map)
+            created_count = 0
+            for item in data:
+                # Basic validation for required fields
+                if not item.get('hospital_id') or not item.get('device_type_id') or not item.get('description'):
+                    continue
+                
+                # Check date format if present
+                task_date = item.get('task_date')
+                if isinstance(task_date, str):
+                    try:
+                        item['task_date'] = datetime.strptime(task_date, '%Y-%m-%d').date()
+                    except ValueError:
+                        item['task_date'] = None
+
+                Task.objects.create(**item)
+                created_count += 1
+            
+            return Response({"count": created_count}, status=201)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
 
 class TaskAnalyticsView(APIView):
     """

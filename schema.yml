@@ -1105,6 +1105,44 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaskAnalyticsResponse'
           description: ''
+  /api/tasks/export_excel/:
+    get:
+      operationId: api_tasks_export_excel_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+                description: Unspecified response body
+          description: ''
+  /api/tasks/import_excel/:
+    post:
+      operationId: api_tasks_import_excel_create
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TaskImport'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+          description: ''
   /api/token/:
     post:
       operationId: api_token_create
@@ -1517,6 +1555,44 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/trips/export_excel/:
+    get:
+      operationId: api_trips_export_excel_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+                description: Unspecified response body
+          description: ''
+  /api/trips/import_excel/:
+    post:
+      operationId: api_trips_import_excel_create
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TripImport'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+          description: ''
   /api/users/:
     get:
       operationId: api_users_list
@@ -1821,6 +1897,13 @@ components:
       - hospital_info
       - id
       - maintenance_date
+    ImportResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+      required:
+      - count
     LogoutRequest:
       type: object
       properties:
@@ -2006,7 +2089,7 @@ components:
         roles:
           type: array
           items:
-            type: integer
+            $ref: '#/components/schemas/RoleSimple'
           readOnly: true
     Permission:
       type: object
@@ -2056,6 +2139,18 @@ components:
       - id
       - name
       - users
+    RoleSimple:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - name
     StatusBreakdown:
       type: object
       properties:
@@ -2147,6 +2242,14 @@ components:
       required:
       - breakdown
       - total
+    TaskImport:
+      type: object
+      properties:
+        file:
+          type: string
+          format: uri
+      required:
+      - file
     TokenObtainPair:
       type: object
       properties:
@@ -2226,6 +2329,14 @@ components:
       - id
       - status_display
       - task_number
+    TripImport:
+      type: object
+      properties:
+        file:
+          type: string
+          format: uri
+      required:
+      - file
     TripResult:
       type: object
       properties:
@@ -2264,7 +2375,7 @@ components:
         roles:
           type: array
           items:
-            type: integer
+            $ref: '#/components/schemas/RoleSimple'
           readOnly: true
       required:
       - fullname
