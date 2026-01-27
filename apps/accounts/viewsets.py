@@ -20,7 +20,8 @@ class UserViewSet(viewsets.ModelViewSet): # Изменили на ModelViewSet
     
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def me(self, request):
-        serializer = self.get_serializer(request.user)
+        user = User.objects.prefetch_related('roles').get(pk=request.user.pk)
+        serializer = self.get_serializer(user)
         return Response(serializer.data)
 
 class RoleViewSet(viewsets.ReadOnlyModelViewSet):
