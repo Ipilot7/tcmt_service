@@ -1,12 +1,14 @@
 from datetime import datetime
+from django.db import models
 from django.db.models import Count
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.views import APIView
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiParameter
 from rest_framework import serializers
+from rest_framework.views import APIView
 from apps.core.excel_service import export_to_excel, parse_excel_file
 from apps.core.choices import StatusChoices
 from .models import Task
@@ -21,7 +23,13 @@ class TaskViewSet(viewsets.ModelViewSet):
     search_fields = ['task_number', 'description', 'hospital__name']
 
     @extend_schema(
-        responses={200: OpenApiParameter(name='file', type=bytes, location='query', description='Excel file')}
+        responses={
+            200: inline_serializer(
+                name='FileUrlResponse',
+                fields={'file_url': serializers.URLField()}
+            ),
+        },
+        description="Экспорт задач в Excel-файл. Возвращает URL-ссылку для скачивания."
     )
     @action(detail=False, methods=['get'])
     def export_excel(self, request):
@@ -37,7 +45,9 @@ class TaskViewSet(viewsets.ModelViewSet):
             ('Дата задачи', 'task_date'),
             ('Дата создания', 'created_at'),
         ]
-        return export_to_excel(queryset, columns, "tasks")
+        relative_path = export_to_excel(queryset, columns, "tasks")
+        file_url = request.build_absolute_uri(f"/media/{relative_path}")
+        return JsonResponse({"file_url": file_url})
 
     @extend_schema(
         request={

@@ -1,10 +1,10 @@
 from datetime import datetime
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, serializers
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiParameter
-from rest_framework import serializers
 from apps.core.excel_service import export_to_excel, parse_excel_file
 from .models import Trip, TripResult
 from .serializers import TripSerializer, TripResultSerializer
@@ -18,7 +18,13 @@ class TripViewSet(viewsets.ModelViewSet):
     search_fields = ['task_number', 'description', 'contact_phone', 'order_number', 'hospital__name']
 
     @extend_schema(
-        responses={200: OpenApiParameter(name='file', type=bytes, location='query', description='Excel file')}
+        responses={
+            200: inline_serializer(
+                name='TripFileUrlResponse',
+                fields={'file_url': serializers.URLField()}
+            ),
+        },
+        description="Экспорт поездок в Excel-файл. Возвращает URL-ссылку для скачивания."
     )
     @action(detail=False, methods=['get'])
     def export_excel(self, request):
@@ -36,7 +42,9 @@ class TripViewSet(viewsets.ModelViewSet):
             ('Ответственный', 'responsible_person.fullname'),
             ('Дата создания', 'created_at'),
         ]
-        return export_to_excel(queryset, columns, "trips")
+        relative_path = export_to_excel(queryset, columns, "trips")
+        file_url = request.build_absolute_uri(f"/media/{relative_path}")
+        return JsonResponse({"file_url": file_url})
 
     @extend_schema(
         request={

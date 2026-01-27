@@ -2,6 +2,8 @@ import openpyxl
 from io import BytesIO
 from django.http import HttpResponse
 from datetime import datetime, date
+import os
+from django.conf import settings
 
 def export_to_excel(queryset, columns, filename_prefix):
     """
@@ -38,15 +40,18 @@ def export_to_excel(queryset, columns, filename_prefix):
 
     output = BytesIO()
     wb.save(output)
-    output.seek(0)
-
+    
+    # Save to media directory
+    export_dir = os.path.join(settings.MEDIA_ROOT, 'exports')
+    os.makedirs(export_dir, exist_ok=True)
+    
     filename = f"{filename_prefix}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
-    response = HttpResponse(
-        output.read(),
-        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
-    return response
+    file_path = os.path.join(export_dir, filename)
+    
+    with open(file_path, 'wb') as f:
+        f.write(output.getvalue())
+        
+    return f"exports/{filename}"
 
 def parse_excel_file(file_obj, column_map):
     """
