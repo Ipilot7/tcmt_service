@@ -155,10 +155,22 @@ paths:
     get:
       operationId: api_devices_list
       parameters:
+      - in: query
+        name: device_type
+        schema:
+          type: integer
+      - in: query
+        name: hospital
+        schema:
+          type: integer
       - name: search
         required: false
         in: query
         description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: serial_number
         schema:
           type: string
       tags:
