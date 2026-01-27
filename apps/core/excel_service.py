@@ -1,7 +1,7 @@
 import openpyxl
 from io import BytesIO
 from django.http import HttpResponse
-from datetime import datetime
+from datetime import datetime, date
 
 def export_to_excel(queryset, columns, filename_prefix):
     """
@@ -31,7 +31,7 @@ def export_to_excel(queryset, columns, filename_prefix):
                     value = getattr(value, part, None)
             
             # Format dates
-            if isinstance(value, (datetime, datetime.date)):
+            if isinstance(value, (datetime, date)):
                 value = value.strftime('%Y-%m-%d')
             
             ws.cell(row=row_num, column=col_num, value=str(value) if value is not None else "")
