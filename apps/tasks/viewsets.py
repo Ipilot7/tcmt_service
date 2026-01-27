@@ -1,5 +1,6 @@
 from django.db.models import Count
 from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, inline_serializer
@@ -7,11 +8,13 @@ from rest_framework import serializers
 from apps.core.choices import StatusChoices
 from .models import Task
 from .serializers import TaskSerializer
+from .filters import TaskFilter
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.select_related('hospital', 'device_type', 'responsible_person').all()
     serializer_class = TaskSerializer
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = TaskFilter
     search_fields = ['task_number', 'description', 'hospital__name']
 
 class TaskAnalyticsView(APIView):
