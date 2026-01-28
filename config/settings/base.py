@@ -148,4 +148,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://service.deepfocus.uz',
     'http://192.168.0.79',
 ]
+# Это говорит Django доверять заголовку от Cloudflare/Nginx о том, что был HTTPS
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
