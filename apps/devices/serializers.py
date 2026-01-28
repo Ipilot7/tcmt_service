@@ -1,0 +1,13 @@
+from rest_framework import serializers
+from .models import DeviceType, Device
+
+class DeviceTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeviceType
+        fields = ['id', 'name']
+class DeviceSerializer(serializers.ModelSerializer):
+    device_type_info = DeviceTypeSerializer(source='device_type', read_only=True)
+    
+    class Meta:
+        model = Device
+        fields = ['id', 'serial_number', 'hospital', 'device_type', 'device_type_info']

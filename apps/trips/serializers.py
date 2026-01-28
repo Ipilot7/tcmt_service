@@ -1,0 +1,47 @@
+from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
+from .models import Trip, TripResult
+from apps.locations.serializers import HospitalSerializer
+from apps.devices.serializers import DeviceTypeSerializer
+from apps.accounts.serializers import UserSerializer
+
+class TripSerializer(serializers.ModelSerializer):
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    
+    class Meta:
+        model = Trip
+        fields = [
+            'id', 'hospital', 'device_type', 'task_number', 'description', 
+            'contact_phone', 'trip_date', 'order_number', 'status', 
+            'status_display', 'responsible_person', 'created_at'
+        ]
+        read_only_fields = ['task_number', 'created_at']
+
+    @extend_schema_field(HospitalSerializer)
+    def get_hospital(self, obj):
+        return HospitalSerializer(obj.hospital).data
+
+    @extend_schema_field(DeviceTypeSerializer)
+    def get_device_type(self, obj):
+        return DeviceTypeSerializer(obj.device_type).data
+
+    @extend_schema_field(serializers.DictField())
+    def get_responsible_person(self, obj):
+        if obj.responsible_person:
+            return {
+                'id': obj.responsible_person.id,
+                'fullname': obj.responsible_person.fullname
+            }
+        return None
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['hospital'] = self.get_hospital(instance)
+        representation['device_type'] = self.get_device_type(instance)
+        representation['responsible_person'] = self.get_responsible_person(instance)
+        return representation
+
+class TripResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TripResult
+        fields = ['trip', 'result_info']

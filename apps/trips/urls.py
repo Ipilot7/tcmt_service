@@ -1,14 +1,11 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from rest_framework import routers
+from . import viewsets
 
-app_name = 'trips'
+router = routers.DefaultRouter()
+router.register(r'trips', viewsets.TripViewSet)
+router.register(r'trip-results', viewsets.TripResultViewSet)
 
 urlpatterns = [
-    path('', views.TripListView.as_view(), name='list'),
-    path('create/', views.TripCreateView.as_view(), name='create'),
-    path('<int:pk>/', views.TripDetailView.as_view(), name='detail'),
-    path('<int:pk>/edit/', views.TripUpdateView.as_view(), name='update'),
-    path('<int:pk>/download/', views.download_trip_docx, name='download_docx'),
-    path('export/', views.export_trips_to_excel, name='export'),
-    path('import/', views.import_trips_from_excel, name='import'),
+    path('', include(router.urls)),
 ]

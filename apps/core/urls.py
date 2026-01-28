@@ -1,10 +1,10 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from rest_framework import routers
+from . import viewsets
 
-app_name = 'core' 
+router = routers.DefaultRouter()
+router.register(r'statuses', viewsets.StatusViewSet, basename='status')
 
 urlpatterns = [
-    path('institutions/', views.InstitutionListView.as_view(), name='institution_list'),
-    path('institutions/create/', views.InstitutionCreateView.as_view(), name='institution_create'),
-    path('institutions/<int:pk>/update/', views.InstitutionUpdateView.as_view(), name='institution_update'),
+    path('', include(router.urls)),
 ]
