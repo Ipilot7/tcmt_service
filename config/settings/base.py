@@ -148,3 +148,4 @@ CSRF_TRUSTED_ORIGINS = [
     'http://service.deepfocus.uz',
     'http://192.168.0.79',
 ]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
