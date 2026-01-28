@@ -14,8 +14,8 @@ class Region(models.Model):
 
 class Hospital(models.Model):
     name = models.CharField(max_length=255, db_index=True)
-    lat = models.DecimalField(max_digits=8, decimal_places=2)
-    long = models.DecimalField(max_digits=8, decimal_places=2)
+    lat = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    long = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     region = models.ForeignKey(Region, on_delete=models.PROTECT, related_name='hospitals')
 
     class Meta:
