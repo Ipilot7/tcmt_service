@@ -146,7 +146,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CSRF_TRUSTED_ORIGINS = [
     'https://service.deepfocus.uz',
     'http://service.deepfocus.uz',
-    'http://192.168.0.79',
+    'http://10.200.20.123',
 ]
 # Это говорит Django доверять заголовку от Cloudflare/Nginx о том, что был HTTPS
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
