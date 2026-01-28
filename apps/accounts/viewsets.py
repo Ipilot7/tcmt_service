@@ -7,7 +7,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers
 from .models import User, Role, Permission
-from .serializers import UserSerializer, RoleSerializer, PermissionSerializer
+from .serializers import UserSerializer, RoleSerializer, PermissionSerializer, CustomTokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 from .permissions import IsAdminOrManager
 

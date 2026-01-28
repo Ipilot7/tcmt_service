@@ -1,5 +1,13 @@
 from rest_framework import serializers
 from .models import User, Role, Permission
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        # Если клиент отправил 'username' вместо 'login', переименовываем его для родительского класса
+        if 'username' in attrs:
+            attrs[self.username_field] = attrs.pop('username')
+        return super().validate(attrs)
 
 class RoleSimpleSerializer(serializers.ModelSerializer):
     class Meta:

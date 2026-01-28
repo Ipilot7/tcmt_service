@@ -4,15 +4,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from drf_spectacular.utils import extend_schema_view, extend_schema
+from apps.accounts.viewsets import CustomTokenObtainPairView
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
     TokenRefreshView,
 )
 
 # Добавляем документацию для JWT эндпоинтов
 TokenObtainPairView = extend_schema_view(
     post=extend_schema(tags=['auth'], summary="Получение токена (Login)")
-)(TokenObtainPairView)
+)(CustomTokenObtainPairView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
