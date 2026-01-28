@@ -141,3 +141,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Добавьте это в настройки
+CSRF_TRUSTED_ORIGINS = [
+    'https://service.deepfocus.uz',
+    'http://service.deepfocus.uz',
+    'http://192.168.0.79',
+]
