@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+    <channel>
+        <title>TCMT Service Updates</title>
+        {% for update in object_list %}
+        <item>
+            <title>{{ update.title }}</title>
+            <description>
+                <![CDATA[
+                    {{ update.description|safe }}
+                ]]>
+            </description>
+            <pubDate>{{ update.pub_date|date:"r" }}</pubDate>
+            <enclosure 
+                url="{{ request.scheme }}://{{ request.get_host }}{{ update.file.url }}" 
+                sparkle:version="{{ update.version }}" 
+                length="{{ update.length }}" 
+                type="{{ update.file_type }}" 
+                sparkle:os="{{ update.os_type }}" />
+        </item>
+        {% endfor %}
+    </channel>
+</rss>
