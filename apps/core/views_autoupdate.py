@@ -12,6 +12,7 @@ class PlainXMLRenderer(renderers.BaseRenderer):
     def render(self, data, accepted_media_type=None, renderer_context=None):
         return data
 
+@extend_schema(tags=['Common'])
 class AppcastView(APIView):
     """
     Эндпоинт для автообновления Windows-приложения (Appcast/Sparkle XML).

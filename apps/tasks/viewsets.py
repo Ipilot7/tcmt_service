@@ -11,13 +11,16 @@ from rest_framework import serializers
 from rest_framework.views import APIView
 from apps.core.excel_service import export_to_excel, parse_excel_file
 from apps.core.choices import StatusChoices
+from apps.core.pagination import StandardResultsSetPagination
 from .models import Task
 from .serializers import TaskSerializer
 from .filters import TaskFilter
 
+@extend_schema(tags=['Tasks'])
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.select_related('hospital', 'device_type', 'responsible_person').all()
     serializer_class = TaskSerializer
+    pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = TaskFilter
     search_fields = ['task_number', 'description', 'hospital__name']
@@ -99,6 +102,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=400)
 
+@extend_schema(tags=['Tasks'])
 class TaskAnalyticsView(APIView):
     """
     Эндпоинт для получения аналитики по задачам (статистика по статусам).
