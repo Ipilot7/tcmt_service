@@ -6,13 +6,16 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiParameter
 from apps.core.excel_service import export_to_excel, parse_excel_file
+from apps.core.pagination import StandardResultsSetPagination
 from .models import Trip, TripResult
 from .serializers import TripSerializer, TripResultSerializer
 from .filters import TripFilter
 
+@extend_schema(tags=['Trips'])
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.select_related('hospital', 'device_type', 'responsible_person').all()
     serializer_class = TripSerializer
+    pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = TripFilter
     search_fields = ['task_number', 'description', 'contact_phone', 'order_number', 'hospital__name']
@@ -98,6 +101,7 @@ class TripViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=400)
 
+@extend_schema(tags=['Trips'])
 class TripResultViewSet(viewsets.ModelViewSet):
     queryset = TripResult.objects.select_related('trip').all()
     serializer_class = TripResultSerializer
