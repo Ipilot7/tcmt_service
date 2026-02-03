@@ -1,6 +1,6 @@
 from rest_framework import viewsets, filters
 from drf_spectacular.utils import extend_schema
-from apps.core.pagination import StandardResultsSetPagination, OptionalPagination
+from apps.core.pagination import StandardResultsSetPagination
 from .models import Region, Hospital, HospitalMaintenance
 from .serializers import RegionSerializer, HospitalSerializer, HospitalMaintenanceSerializer
 
@@ -13,7 +13,7 @@ class RegionViewSet(viewsets.ModelViewSet):
 class HospitalViewSet(viewsets.ModelViewSet):
     queryset = Hospital.objects.select_related('region').all()
     serializer_class = HospitalSerializer
-    pagination_class = OptionalPagination
+    pagination_class = StandardResultsSetPagination
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'region__name']
 
