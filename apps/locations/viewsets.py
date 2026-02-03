@@ -1,8 +1,10 @@
 from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from apps.core.pagination import StandardResultsSetPagination
 from .models import Region, Hospital, HospitalMaintenance
 from .serializers import RegionSerializer, HospitalSerializer, HospitalMaintenanceSerializer
+from .filters import HospitalFilter
 
 @extend_schema(tags=['Locations'])
 class RegionViewSet(viewsets.ModelViewSet):
@@ -14,7 +16,8 @@ class HospitalViewSet(viewsets.ModelViewSet):
     queryset = Hospital.objects.select_related('region').all()
     serializer_class = HospitalSerializer
     pagination_class = StandardResultsSetPagination
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = HospitalFilter
     search_fields = ['name', 'region__name']
 
 @extend_schema(tags=['Locations'])
