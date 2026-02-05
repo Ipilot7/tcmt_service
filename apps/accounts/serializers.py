@@ -59,6 +59,9 @@ class PermissionSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'roles']
 
 class FCMTokenSerializer(serializers.ModelSerializer):
+    # We remove the default UniqueValidator by explicitly defining the field
+    token = serializers.CharField(max_length=255)
+
     class Meta:
         model = FCMToken
         fields = ['id', 'token', 'created_at']
@@ -66,5 +69,10 @@ class FCMTokenSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context['request'].user
         token = validated_data.get('token')
-        fcm_token, created = FCMToken.objects.get_or_create(user=user, token=token)
+        # Use update_or_create to ensure the token belongs to the current user
+        # and doesn't crash on existing tokens.
+        fcm_token, created = FCMToken.objects.update_or_create(
+            token=token,
+            defaults={'user': user}
+        )
         return fcm_token
