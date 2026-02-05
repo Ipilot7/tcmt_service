@@ -62,7 +62,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                 fields={'file': serializers.FileField()}
             )
         },
-        responses={201: inline_serializer(name='ImportResponse', fields={'count': serializers.IntegerField()})}
+        responses={201: inline_serializer(name='TaskImportResponse', fields={'count': serializers.IntegerField()})}
     )
     @action(detail=False, methods=['post'])
     def import_excel(self, request):

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "767596610043",
+    "project_id": "tcmt-service",
+    "storage_bucket": "tcmt-service.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:767596610043:android:9c9c40c626658de81c8b5e",
+        "android_client_info": {
+          "package_name": "uz.tcmt.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJR1g4Ku5BjFUVyfjx52Sop-s-GvVJHzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

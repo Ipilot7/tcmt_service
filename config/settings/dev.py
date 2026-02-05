@@ -8,13 +8,13 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-ALLOWED_HOSTS = ['http://10.200.20.123',"localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 # Добавьте это в настройки
 CSRF_TRUSTED_ORIGINS = [
     'https://service.deepfocus.uz',
     'http://service.deepfocus.uz',
-    'http://10.200.20.123',
+    'http://10.200.20.126',
 ]
 # Это говорит Django доверять заголовку от Cloudflare/Nginx о том, что был HTTPS
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
