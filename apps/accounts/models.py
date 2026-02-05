@@ -64,6 +64,19 @@ class Role(models.Model):
     def __str__(self):
         return self.name
 
+class FCMToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fcm_tokens')
+    token = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'fcm_tokens'
+        verbose_name = 'FCM Token'
+        verbose_name_plural = 'FCM Tokens'
+
+    def __str__(self):
+        return f"{self.user.fullname} - {self.token[:10]}..."
+
 class Permission(models.Model):
     name = models.CharField(max_length=255, unique=True)
     roles = models.ManyToManyField(Role, related_name='permissions', db_table='role_permissions', blank=True)

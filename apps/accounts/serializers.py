@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Role, Permission
+from .models import User, Role, Permission, FCMToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -57,3 +57,14 @@ class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permission
         fields = ['id', 'name', 'roles']
+
+class FCMTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FCMToken
+        fields = ['id', 'token', 'created_at']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        token = validated_data.get('token')
+        fcm_token, created = FCMToken.objects.get_or_create(user=user, token=token)
+        return fcm_token
