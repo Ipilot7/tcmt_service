@@ -125,9 +125,9 @@ class TaskAnalyticsView(APIView):
                             }
                         )
                     ),
-                    'monthly_breakdown': serializers.ListField(
+                    'yearly_report': serializers.ListField(
                         child=inline_serializer(
-                            name='MonthlyBreakdown',
+                            name='YearlyReport',
                             fields={
                                 'month': serializers.CharField(),
                                 'count': serializers.IntegerField(),
@@ -163,21 +163,8 @@ class TaskAnalyticsView(APIView):
                 'color': colors.get(code, "#000000")
             })
 
-        # Monthly breakdown
-        monthly_counts = Task.objects.annotate(
-            month=TruncMonth('created_at')
-        ).values('month').annotate(count=Count('id')).order_by('month')
-
-        monthly_breakdown = []
-        for item in monthly_counts:
-            if item['month']:
-                monthly_breakdown.append({
-                    'month': item['month'].strftime('%Y-%m'),
-                    'count': item['count']
-                })
-
         return Response({
             'total': total,
             'breakdown': breakdown,
-            'monthly_breakdown': monthly_breakdown
+            'yearly_report': yearly_report
         })

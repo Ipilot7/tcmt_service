@@ -132,9 +132,9 @@ class TripAnalyticsView(APIView):
                             }
                         )
                     ),
-                    'monthly_breakdown': serializers.ListField(
+                    'yearly_report': serializers.ListField(
                         child=inline_serializer(
-                            name='TripMonthlyBreakdown',
+                            name='TripYearlyReport',
                             fields={
                                 'month': serializers.CharField(),
                                 'count': serializers.IntegerField(),
@@ -170,21 +170,35 @@ class TripAnalyticsView(APIView):
                 'color': colors.get(code, "#000000")
             })
 
-        # Агрегация данных по месяцам
-        monthly_counts = Trip.objects.annotate(
+        # Yearly report (last 12 months)
+        from django.utils import timezone
+        from dateutil.relativedelta import relativedelta
+        
+        end_date = timezone.now().date().replace(day=1)
+        start_date = end_date - relativedelta(months=11)
+        
+        yearly_counts = Trip.objects.filter(
+            created_at__date__gte=start_date
+        ).annotate(
             month=TruncMonth('created_at')
         ).values('month').annotate(count=Count('id')).order_by('month')
-
-        monthly_breakdown = []
-        for item in monthly_counts:
-            if item['month']:
-                monthly_breakdown.append({
-                    'month': item['month'].strftime('%Y-%m'),
-                    'count': item['count']
-                })
+        
+        yearly_counts_dict = {
+            item['month'].strftime('%Y-%m'): item['count'] 
+            for item in yearly_counts if item['month']
+        }
+        
+        yearly_report = []
+        for i in range(12):
+            month_date = start_date + relativedelta(months=i)
+            month_str = month_date.strftime('%Y-%m')
+            yearly_report.append({
+                'month': month_str,
+                'count': yearly_counts_dict.get(month_str, 0)
+            })
 
         return Response({
             'total': total,
             'breakdown': breakdown,
-            'monthly_breakdown': monthly_breakdown
+            'yearly_report': yearly_report
         })
