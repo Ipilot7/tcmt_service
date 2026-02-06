@@ -5,6 +5,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiParameter
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
+from rest_framework.views import APIView
+from apps.core.choices import StatusChoices
 from apps.core.excel_service import export_to_excel, parse_excel_file
 from apps.core.pagination import StandardResultsSetPagination
 from .models import Trip, TripResult
@@ -105,3 +109,82 @@ class TripViewSet(viewsets.ModelViewSet):
 class TripResultViewSet(viewsets.ModelViewSet):
     queryset = TripResult.objects.select_related('trip').all()
     serializer_class = TripResultSerializer
+
+@extend_schema(tags=['Trips'])
+class TripAnalyticsView(APIView):
+    """
+    Эндпоинт для получения аналитики по поездкам (статистика по статусам и по месяцам).
+    """
+    @extend_schema(
+        responses={
+            200: inline_serializer(
+                name='TripAnalyticsResponse',
+                fields={
+                    'total': serializers.IntegerField(),
+                    'breakdown': serializers.ListField(
+                        child=inline_serializer(
+                            name='TripStatusBreakdown',
+                            fields={
+                                'id': serializers.CharField(),
+                                'label': serializers.CharField(),
+                                'count': serializers.IntegerField(),
+                                'color': serializers.CharField(),
+                            }
+                        )
+                    ),
+                    'monthly_breakdown': serializers.ListField(
+                        child=inline_serializer(
+                            name='TripMonthlyBreakdown',
+                            fields={
+                                'month': serializers.CharField(),
+                                'count': serializers.IntegerField(),
+                            }
+                        )
+                    )
+                }
+            )
+        }
+    )
+    def get(self, request):
+        # Агрегация данных по статусам
+        counts = Trip.objects.values('status').annotate(count=Count('id'))
+        counts_dict = {item['status']: item['count'] for item in counts}
+        
+        total = sum(counts_dict.values())
+        
+        # Соответствие цветов для фронтенда 
+        colors = {
+            StatusChoices.NEW: "#6366f1",      # Indigo/Blue
+            StatusChoices.PENDING: "#f59e0b",  # Amber/Orange (In Progress)
+            StatusChoices.COMPLETED: "#10b981",# Emerald/Green
+            StatusChoices.CANCELED: "#ef4444", # Red
+            StatusChoices.ON_HOLD: "#64748b",   # Slate/Grey
+        }
+
+        breakdown = []
+        for code, label in StatusChoices.choices:
+            breakdown.append({
+                'id': code,
+                'label': label,
+                'count': counts_dict.get(code, 0),
+                'color': colors.get(code, "#000000")
+            })
+
+        # Агрегация данных по месяцам
+        monthly_counts = Trip.objects.annotate(
+            month=TruncMonth('created_at')
+        ).values('month').annotate(count=Count('id')).order_by('month')
+
+        monthly_breakdown = []
+        for item in monthly_counts:
+            if item['month']:
+                monthly_breakdown.append({
+                    'month': item['month'].strftime('%Y-%m'),
+                    'count': item['count']
+                })
+
+        return Response({
+            'total': total,
+            'breakdown': breakdown,
+            'monthly_breakdown': monthly_breakdown
+        })

@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 from django.db.models import Count
+from django.db.models.functions import TruncMonth
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse
@@ -123,6 +124,15 @@ class TaskAnalyticsView(APIView):
                                 'color': serializers.CharField(),
                             }
                         )
+                    ),
+                    'monthly_breakdown': serializers.ListField(
+                        child=inline_serializer(
+                            name='MonthlyBreakdown',
+                            fields={
+                                'month': serializers.CharField(),
+                                'count': serializers.IntegerField(),
+                            }
+                        )
                     )
                 }
             )
@@ -153,7 +163,21 @@ class TaskAnalyticsView(APIView):
                 'color': colors.get(code, "#000000")
             })
 
+        # Monthly breakdown
+        monthly_counts = Task.objects.annotate(
+            month=TruncMonth('created_at')
+        ).values('month').annotate(count=Count('id')).order_by('month')
+
+        monthly_breakdown = []
+        for item in monthly_counts:
+            if item['month']:
+                monthly_breakdown.append({
+                    'month': item['month'].strftime('%Y-%m'),
+                    'count': item['count']
+                })
+
         return Response({
             'total': total,
-            'breakdown': breakdown
+            'breakdown': breakdown,
+            'monthly_breakdown': monthly_breakdown
         })
