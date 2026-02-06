@@ -172,26 +172,39 @@ class TripAnalyticsView(APIView):
 
         # Yearly report (last 12 months)
         from django.utils import timezone
-        from dateutil.relativedelta import relativedelta
+        import datetime
         
-        end_date = timezone.now().date().replace(day=1)
-        start_date = end_date - relativedelta(months=11)
+        now = timezone.now().date()
+        year = now.year
+        month = now.month
+        
+        months_list = []
+        for i in range(12):
+            months_list.append(f"{year}-{month:02d}")
+            month -= 1
+            if month == 0:
+                month = 12
+                year -= 1
+        months_list.reverse()
+        
+        # Start date is the first day of the oldest month in our list
+        oldest_month_str = months_list[0]
+        start_year, start_month = map(int, oldest_month_str.split('-'))
+        start_date = datetime.date(start_year, start_month, 1)
         
         yearly_counts = Trip.objects.filter(
-            created_at__date__gte=start_date
+            created_at__gte=start_date
         ).annotate(
-            month=TruncMonth('created_at')
-        ).values('month').annotate(count=Count('id')).order_by('month')
+            month_trunc=TruncMonth('created_at')
+        ).values('month_trunc').annotate(count=Count('id')).order_by('month_trunc')
         
         yearly_counts_dict = {
-            item['month'].strftime('%Y-%m'): item['count'] 
-            for item in yearly_counts if item['month']
+            item['month_trunc'].strftime('%Y-%m'): item['count'] 
+            for item in yearly_counts if item['month_trunc']
         }
         
         yearly_report = []
-        for i in range(12):
-            month_date = start_date + relativedelta(months=i)
-            month_str = month_date.strftime('%Y-%m')
+        for month_str in months_list:
             yearly_report.append({
                 'month': month_str,
                 'count': yearly_counts_dict.get(month_str, 0)
