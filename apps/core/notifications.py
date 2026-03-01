@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 def initialize_firebase():
     """
     Initializes the Firebase Admin SDK.
-    Requires FIREBASE_SERVICE_ACCOUNT_PATH in settings (from .env).
     """
     if not firebase_admin._apps:
         service_account_path = getattr(settings, 'FIREBASE_SERVICE_ACCOUNT_PATH', None)
@@ -19,10 +18,15 @@ def initialize_firebase():
             try:
                 cred = credentials.Certificate(service_account_path)
                 firebase_admin.initialize_app(cred)
+                logger.info("Firebase initialized successfully")
             except Exception as e:
-                logger.error(f"Error initializing Firebase: {e}")
+                # Change to warning to avoid cluttering logs if Firebase is not fully configured
+                logger.warning(f"Firebase initialization skipped or failed: {e}")
         else:
-            logger.warning("FIREBASE_SERVICE_ACCOUNT_PATH not found or file does not exist. Push notifications will be disabled.")
+            # Only warn once
+            if not hasattr(initialize_firebase, '_warned'):
+                logger.warning("Firebase service account path not found. Push notifications via FCM will be disabled.")
+                initialize_firebase._warned = True
 
 def send_telegram_notification(user, text):
     """
@@ -46,7 +50,7 @@ def send_telegram_notification(user, text):
     }
     
     try:
-        response = requests.post(url, json=payload, timeout=5)
+        response = requests.post(url, json=payload, timeout=15)
         response.raise_for_status()
         logger.info(f"Telegram notification sent to user {user.id}")
         return response.json()

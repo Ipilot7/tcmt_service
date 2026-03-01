@@ -6,6 +6,7 @@ from asgiref.sync import sync_to_async
 from apps.tasks.models import Task
 from apps.accounts.models import User
 from apps.core.choices import StatusChoices
+from apps.bot.keyboards.main import get_main_menu
 
 router = Router()
 
