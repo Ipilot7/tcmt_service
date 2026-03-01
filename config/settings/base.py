@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'apps.devices',
     'apps.tasks',
     'apps.trips',
+    'apps.bot',
     'django_filters',
 ]
 
@@ -154,3 +155,4 @@ CSRF_COOKIE_SECURE = True
 
 # Firebase configuration
 FIREBASE_SERVICE_ACCOUNT_PATH = env('FIREBASE_SERVICE_ACCOUNT_PATH', default=None)
+TELEGRAM_BOT_TOKEN = env('TELEGRAM_BOT_TOKEN', default=None)
