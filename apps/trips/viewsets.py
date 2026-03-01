@@ -17,7 +17,7 @@ from .filters import TripFilter
 
 @extend_schema(tags=['Trips'])
 class TripViewSet(viewsets.ModelViewSet):
-    queryset = Trip.objects.select_related('hospital', 'device_type', 'responsible_person').all()
+    queryset = Trip.objects.select_related('hospital', 'device_type').prefetch_related('responsible_persons').all()
     serializer_class = TripSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -46,8 +46,8 @@ class TripViewSet(viewsets.ModelViewSet):
             ('Описание', 'description'),
             ('Телефон', 'contact_phone'),
             ('Дата поездки', 'trip_date'),
-            ('ID Ответственного', 'responsible_person_id'),
-            ('Ответственный', 'responsible_person.fullname'),
+            ('ID Ответственных', 'responsible_persons_ids'),
+            ('Ответственные', 'responsible_persons_names'),
             ('Номер заказа', 'order_number'),
             ('Статус', 'status'),
             ('Дата создания', 'created_at'),
@@ -77,7 +77,6 @@ class TripViewSet(viewsets.ModelViewSet):
             'Описание': 'description',
             'Телефон': 'contact_phone',
             'Статус': 'status',
-            'ID Ответственного': 'responsible_person_id',
             'Дата поездки': 'trip_date',
             'Номер заказа': 'order_number',
         }

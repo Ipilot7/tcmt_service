@@ -34,10 +34,9 @@ async def list_user_trips(message: Message):
         await message.answer("❌ Сначала зарегистрируйтесь.")
         return
 
-    # Получаем активные поездки
     trips = await sync_to_async(
         lambda: list(Trip.objects.filter(
-            responsible_person=user
+            responsible_persons=user
         ).exclude(status__in=[StatusChoices.COMPLETED, StatusChoices.CANCELED]).select_related('device_type')[:15])
     )()
 
@@ -64,16 +63,20 @@ async def show_trip_detail(message: Message):
     user = await sync_to_async(lambda: User.objects.filter(telegram_id=str(message.from_user.id)).first())()
     
     trip = await sync_to_async(
-        lambda: Trip.objects.filter(id=trip_id, responsible_person=user).select_related('device_type', 'hospital').first()
+        lambda: Trip.objects.filter(id=trip_id, responsible_persons=user).select_related('device_type', 'hospital').first()
     )()
 
     if not trip:
         await message.answer("❌ Поездка не найдена или у вас нет к ней доступа.")
         return
 
+    # Список всех ответственных
+    responsibles = await sync_to_async(lambda: ", ".join([u.fullname for u in trip.responsible_persons.all()]))()
+
     text = (
         f"🚗 <b>ПОЕЗДКА № {trip.task_number}</b>\n"
         "────────────────────\n\n"
+        f"👥 <b>Ответственные:</b>\n└ {responsibles}\n\n"
         f"📍 <b>Локация:</b>\n└ {trip.hospital.name}\n\n"
         f"🩺 <b>Оборудование:</b>\n└ {trip.device_type.name}\n\n"
         f"📝 <b>Задача:</b>\n{trip.description}\n\n"

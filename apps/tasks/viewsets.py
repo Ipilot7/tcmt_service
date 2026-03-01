@@ -19,7 +19,7 @@ from .filters import TaskFilter
 
 @extend_schema(tags=['Tasks'])
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.select_related('hospital', 'device_type', 'responsible_person').all()
+    queryset = Task.objects.select_related('hospital', 'device_type').prefetch_related('responsible_persons').all()
     serializer_class = TaskSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -47,8 +47,8 @@ class TaskViewSet(viewsets.ModelViewSet):
             ('Тип оборудования', 'device_type.name'),
             ('Описание', 'description'),
             ('Статус', 'status'),
-            ('ID Ответственного', 'responsible_person_id'),
-            ('Ответственный', 'responsible_person.fullname'),
+            ('ID Ответственных', 'responsible_persons_ids'),
+            ('Ответственные', 'responsible_persons_names'),
             ('Дата задачи', 'task_date'),
             ('Дата создания', 'created_at'),
         ]
@@ -76,7 +76,6 @@ class TaskViewSet(viewsets.ModelViewSet):
             'ID Типа оборудования': 'device_type_id',
             'Описание': 'description',
             'Статус': 'status',
-            'ID Ответственного': 'responsible_person_id',
             'Дата задачи': 'task_date',
         }
         

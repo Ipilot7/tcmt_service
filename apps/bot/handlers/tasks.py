@@ -34,10 +34,9 @@ async def list_user_tasks(message: Message):
         await message.answer("❌ Сначала зарегистрируйтесь.")
         return
 
-    # Получаем активные задачи (не завершенные и не отмененные)
     tasks = await sync_to_async(
         lambda: list(Task.objects.filter(
-            responsible_person=user
+            responsible_persons=user
         ).exclude(status__in=[StatusChoices.COMPLETED, StatusChoices.CANCELED]).select_related('device_type')[:15])
     )()
 
@@ -65,16 +64,20 @@ async def show_task_detail(message: Message):
     user = await sync_to_async(lambda: User.objects.filter(telegram_id=str(message.from_user.id)).first())()
     
     task = await sync_to_async(
-        lambda: Task.objects.filter(id=task_id, responsible_person=user).select_related('device_type', 'hospital').first()
+        lambda: Task.objects.filter(id=task_id, responsible_persons=user).select_related('device_type', 'hospital').first()
     )()
 
     if not task:
         await message.answer("❌ Задача не найдена или у вас нет к ней доступа.")
         return
 
+    # Список всех ответственных для отображения
+    responsibles = await sync_to_async(lambda: ", ".join([u.fullname for u in task.responsible_persons.all()]))()
+
     text = (
         f"📋 <b>ЗАДАЧА № {task.task_number}</b>\n"
         "────────────────────\n\n"
+        f"👥 <b>Ответственные:</b>\n└ {responsibles}\n\n"
         f"📍 <b>Локация:</b>\n└ {task.hospital.name}\n\n"
         f"🩺 <b>Оборудование:</b>\n└ {task.device_type.name}\n\n"
         f"📝 <b>Описание проблемы:</b>\n{task.description}\n\n"

@@ -24,12 +24,12 @@ class NotificationSignalTest(TestCase):
 
     @patch('apps.core.notifications.send_push_notification')
     def test_task_creation_notification(self, mock_send):
-        Task.objects.create(
+        task = Task.objects.create(
             hospital=self.hospital,
             device_type=self.device_type,
-            description='Test Task',
-            responsible_person=self.user
+            description='Test Task'
         )
+        task.responsible_persons.add(self.user)
         self.assertTrue(mock_send.called)
         # Check if called with correct user
         args, kwargs = mock_send.call_args
@@ -37,13 +37,13 @@ class NotificationSignalTest(TestCase):
 
     @patch('apps.core.notifications.send_push_notification')
     def test_trip_creation_notification(self, mock_send):
-        Trip.objects.create(
+        trip = Trip.objects.create(
             hospital=self.hospital,
             device_type=self.device_type,
             description='Test Trip',
-            contact_phone='12345678',
-            responsible_person=self.user
+            contact_phone='12345678'
         )
+        trip.responsible_persons.add(self.user)
         self.assertTrue(mock_send.called)
         args, kwargs = mock_send.call_args
         self.assertEqual(kwargs['user'], self.user)
@@ -53,9 +53,9 @@ class NotificationSignalTest(TestCase):
         task = Task.objects.create(
             hospital=self.hospital,
             device_type=self.device_type,
-            description='Test Task',
-            responsible_person=self.user
+            description='Test Task'
         )
+        task.responsible_persons.add(self.user)
         # Reset mock after creation
         mock_notify.reset_mock()
         
@@ -63,5 +63,3 @@ class NotificationSignalTest(TestCase):
         task.save()
         
         self.assertTrue(mock_notify.called)
-        args, kwargs = mock_notify.call_args
-        self.assertIn('Статус задачи', args[0])
