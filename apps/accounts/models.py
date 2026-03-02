@@ -19,6 +19,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     fullname = models.CharField(max_length=255, db_index=True)
     psn = models.CharField(max_length=255)
     login = models.CharField(max_length=255, unique=True)
+    telegram_id = models.CharField(max_length=255, unique=True, null=True, blank=True, db_index=True)
     
     # Служебные поля для работы админки
     is_active = models.BooleanField(default=True)

@@ -19,7 +19,7 @@ from .filters import TaskFilter
 
 @extend_schema(tags=['Tasks'])
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.select_related('hospital', 'device_type', 'responsible_person').all()
+    queryset = Task.objects.select_related('hospital', 'device_type').prefetch_related('responsible_persons').all()
     serializer_class = TaskSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -47,8 +47,8 @@ class TaskViewSet(viewsets.ModelViewSet):
             ('Тип оборудования', 'device_type.name'),
             ('Описание', 'description'),
             ('Статус', 'status'),
-            ('ID Ответственного', 'responsible_person_id'),
-            ('Ответственный', 'responsible_person.fullname'),
+            ('ID Ответственных', 'responsible_persons_ids'),
+            ('Ответственные', 'responsible_persons_names'),
             ('Дата задачи', 'task_date'),
             ('Дата создания', 'created_at'),
         ]
@@ -76,7 +76,6 @@ class TaskViewSet(viewsets.ModelViewSet):
             'ID Типа оборудования': 'device_type_id',
             'Описание': 'description',
             'Статус': 'status',
-            'ID Ответственного': 'responsible_person_id',
             'Дата задачи': 'task_date',
         }
         
@@ -106,7 +105,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 @extend_schema(tags=['Tasks'])
 class TaskAnalyticsView(APIView):
     """
-    Эндпоинт для получения аналитики по задачам (статистика по статусам).
+    Эндпоинт для получения аналитики по задачам (статистика по аппаратам).
     """
     @extend_schema(
         responses={
@@ -116,7 +115,7 @@ class TaskAnalyticsView(APIView):
                     'total': serializers.IntegerField(),
                     'breakdown': serializers.ListField(
                         child=inline_serializer(
-                            name='StatusBreakdown',
+                            name='DeviceBreakdown',
                             fields={
                                 'id': serializers.CharField(),
                                 'label': serializers.CharField(),
@@ -139,28 +138,32 @@ class TaskAnalyticsView(APIView):
         }
     )
     def get(self, request):
-        # Агрегация данных
-        counts = Task.objects.values('status').annotate(count=Count('id'))
-        counts_dict = {item['status']: item['count'] for item in counts}
+        # Агрегация данных по типам оборудования (аппаратам)
+        counts = Task.objects.values('device_type__id', 'device_type__name').annotate(count=Count('id')).order_by('-count')
         
-        total = sum(counts_dict.values())
+        total = Task.objects.count()
         
-        # Соответствие цветов для фронтенда (как на макете)
-        colors = {
-            StatusChoices.NEW: "#6366f1",      # Indigo/Blue
-            StatusChoices.PENDING: "#f59e0b",  # Amber/Orange (In Progress)
-            StatusChoices.COMPLETED: "#10b981",# Emerald/Green
-            StatusChoices.CANCELED: "#ef4444", # Red
-            StatusChoices.ON_HOLD: "#64748b",   # Slate/Grey
-        }
+        # Цвета для графиков
+        preset_colors = [
+            "#6366f1",  # Indigo
+            "#f59e0b",  # Amber
+            "#10b981",  # Emerald
+            "#ef4444",  # Red
+            "#64748b",  # Slate
+            "#8b5cf6",  # Violet
+            "#ec4899",  # Pink
+            "#06b6d4",  # Cyan
+            "#f97316",  # Orange
+            "#84cc16",  # Lime
+        ]
 
         breakdown = []
-        for code, label in StatusChoices.choices:
+        for i, item in enumerate(counts):
             breakdown.append({
-                'id': code,
-                'label': label,
-                'count': counts_dict.get(code, 0),
-                'color': colors.get(code, "#000000")
+                'id': str(item['device_type__id']),
+                'label': item['device_type__name'],
+                'count': item['count'],
+                'color': preset_colors[i % len(preset_colors)]
             })
 
         # Yearly report (last 12 months)

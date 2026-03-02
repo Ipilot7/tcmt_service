@@ -13,5 +13,5 @@ class TripFilter(filters.FilterSet):
             'hospital': ['exact'],
             'device_type': ['exact'],
             'status': ['exact'],
-            'responsible_person': ['exact'],
+            'responsible_persons': ['exact'],
         }

@@ -1,43 +1,34 @@
-from django.db.models.signals import post_save
+import logging
+from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
 from .models import Task
 from apps.core.notifications import send_push_notification, notify_managers
 
+logger = logging.getLogger(__name__)
+
 @receiver(post_save, sender=Task)
 def task_notification_handler(sender, instance, created, **kwargs):
-    if created:
-        # 1. Notify the responsible person about the new task
-        if instance.responsible_person:
+    logger.info(f"--- Task Signal (post_save) [{instance.task_number}] ---")
+    
+    # Notify managers about new/updated task
+    title = "🆕 Новая задача" if created else "📢 Обновление задачи"
+    notify_managers(
+        title=title,
+        body=f"Задача {instance.task_number} ({instance.get_status_display()})",
+        data={"type": "manager_info", "task_id": str(instance.id)}
+    )
+
+@receiver(m2m_changed, sender=Task.responsible_persons.through)
+def task_m2m_notification_handler(sender, instance, action, pk_set, **kwargs):
+    if action == "post_add":
+        logger.info(f"--- Task M2M changed (post_add) [{instance.task_number}] ---")
+        from apps.accounts.models import User
+        users = User.objects.filter(pk__in=pk_set)
+        for user in users:
+            logger.info(f"NOTIFYING ASSIGNED USER: {user.id}")
             send_push_notification(
-                user=instance.responsible_person,
-                title="Новая задача назначена",
-                body=f"Вам назначена задача {instance.task_number}: {instance.description[:50]}...",
-                data={
-                    "type": "new_task",
-                    "task_id": str(instance.id),
-                    "task_number": instance.task_number
-                }
+                user=user,
+                title="🆕 Вам назначена задача",
+                body=f"Вы добавлены в задачу № {instance.task_number}: {instance.description[:100]}",
+                data={"type": "new_task", "task_id": str(instance.id)}
             )
-    else:
-        # 2. Check if the status has changed
-        # We need to check if 'status' was in updated fields
-        # Note: update_fields is often None in simple save calls
-        # A more robust way is to compare with the previous state, 
-        # but for this requirement, we'll assume status change if not created 
-        # and it's being saved (usually status updates are separate actions).
-        
-        # In a real app, you might want to track the original status.
-        # For now, we notify managers on any update to a task that might be a status change.
-        # Ideally, this should be triggered only when instance.status actually changed.
-        
-        # Improvement: Managers want to know about status changes.
-        notify_managers(
-            title="Обновление статуса задачи",
-            body=f"Статус задачи {instance.task_number} изменен на: {instance.get_status_display()}",
-            data={
-                "type": "task_status_change",
-                "task_id": str(instance.id),
-                "task_number": instance.task_number,
-                "new_status": instance.status
-            }
-        )

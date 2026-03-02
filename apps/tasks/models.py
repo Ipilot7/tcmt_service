@@ -15,13 +15,12 @@ class Task(models.Model):
         default=StatusChoices.NEW,
         db_index=True
     )
-    responsible_person = models.ForeignKey(
-        User, 
-        on_delete=models.PROTECT, 
+    responsible_persons = models.ManyToManyField(
+        User,
         related_name='responsible_tasks',
         limit_choices_to={'is_superuser': False},
-        null=True,
-        blank=True
+        blank=True,
+        verbose_name='Responsible Persons'
     )
     task_date = models.DateField(null=True, blank=True)
     created_at = models.DateField(auto_now_add=True, db_index=True)
@@ -48,6 +47,14 @@ class Task(models.Model):
                 new_number = 1
             self.task_number = f'SR-{year}-{new_number:04d}'
         super().save(*args, **kwargs)
+
+    @property
+    def responsible_persons_names(self):
+        return ", ".join([u.fullname for u in self.responsible_persons.all()]) or "None"
+
+    @property
+    def responsible_persons_ids(self):
+        return ", ".join([str(u.id) for u in self.responsible_persons.all()]) or "None"
 
     def __str__(self):
         return f"Task {self.task_number} - {self.get_status_display()}"

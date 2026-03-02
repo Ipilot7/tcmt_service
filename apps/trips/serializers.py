@@ -13,7 +13,7 @@ class TripSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'hospital', 'device_type', 'task_number', 'description', 
             'contact_phone', 'trip_date', 'order_number', 'status', 
-            'status_display', 'responsible_person', 'created_at'
+            'status_display', 'responsible_persons', 'created_at'
         ]
         read_only_fields = ['task_number', 'created_at']
 
@@ -25,20 +25,19 @@ class TripSerializer(serializers.ModelSerializer):
     def get_device_type(self, obj):
         return DeviceTypeSerializer(obj.device_type).data
 
-    @extend_schema_field(serializers.DictField())
-    def get_responsible_person(self, obj):
-        if obj.responsible_person:
-            return {
-                'id': obj.responsible_person.id,
-                'fullname': obj.responsible_person.fullname
-            }
-        return None
+    @extend_schema_field(serializers.ListField(child=serializers.DictField()))
+    def get_responsible_persons(self, obj):
+        return [
+            {'id': user.id, 'fullname': user.fullname} 
+            for user in obj.responsible_persons.all()
+        ]
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['hospital'] = self.get_hospital(instance)
         representation['device_type'] = self.get_device_type(instance)
-        representation['responsible_person'] = self.get_responsible_person(instance)
+        representation['responsible_persons'] = self.get_responsible_persons(instance)
+        representation.pop('responsible_person', None)
         return representation
 
 class TripResultSerializer(serializers.ModelSerializer):
