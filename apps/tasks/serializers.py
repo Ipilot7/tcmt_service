@@ -1,8 +1,13 @@
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_field
-from .models import Task
+from .models import Task, TaskCategory
 from apps.locations.serializers import HospitalSerializer
 from apps.devices.serializers import DeviceTypeSerializer
+
+class TaskCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaskCategory
+        fields = ['id', 'name']
 
 class TaskSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source='get_status_display', read_only=True)
@@ -10,8 +15,8 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = [
-            'id', 'hospital', 'device_type', 'task_number', 
-            'description', 'status', 'status_display', 
+            'id', 'hospital', 'category', 'device_type', 'task_number', 
+            'description', 'phone_number', 'status', 'status_display', 
             'responsible_persons', 'task_date', 'created_at'
         ]
         read_only_fields = ['task_number', 'created_at']
@@ -35,6 +40,7 @@ class TaskSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['hospital'] = self.get_hospital(instance)
         representation['device_type'] = self.get_device_type(instance)
+        representation['category'] = TaskCategorySerializer(instance.category).data if instance.category else None
         representation['responsible_persons'] = self.get_responsible_persons(instance)
         # Для обратной совместимости или если клиент ждет старое имя (но лучше приучать к новому)
         representation.pop('responsible_person', None) 

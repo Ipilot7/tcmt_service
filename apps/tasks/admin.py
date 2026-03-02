@@ -1,12 +1,16 @@
 from django.contrib import admin, messages
-from .models import Task
+from .models import Task, TaskCategory
 from apps.core.notifications import send_push_notification
+
+@admin.register(TaskCategory)
+class TaskCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ('task_number', 'hospital', 'device_type', 'status', 'get_responsible_persons', 'task_date', 'created_at')
-    list_filter = ('status', 'hospital', 'device_type', 'responsible_persons', 'task_date', 'created_at')
-    search_fields = ('task_number', 'description')
+    list_display = ('task_number', 'hospital', 'category', 'device_type', 'status', 'get_responsible_persons', 'phone_number', 'task_date', 'created_at')
+    list_filter = ('status', 'hospital', 'category', 'device_type', 'responsible_persons', 'task_date', 'created_at')
+    search_fields = ('task_number', 'description', 'phone_number')
     actions = ['send_notification']
 
     def get_responsible_persons(self, obj):

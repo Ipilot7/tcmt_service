@@ -4,11 +4,23 @@ from apps.devices.models import DeviceType
 from apps.accounts.models import User
 from apps.core.choices import StatusChoices
 
+class TaskCategory(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Название категории")
+
+    class Meta:
+        verbose_name = "Категория заявки"
+        verbose_name_plural = "Категории заявок"
+
+    def __str__(self):
+        return self.name
+
 class Task(models.Model):
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='tasks')
+    category = models.ForeignKey(TaskCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='tasks', verbose_name="К чему относится")
     device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE, related_name='tasks')
     task_number = models.CharField(max_length=255, unique=True, blank=True)
     description = models.TextField()
+    phone_number = models.CharField(max_length=20, blank=True, null=True, verbose_name="Номер телефона")
     status = models.CharField(
         max_length=2,
         choices=StatusChoices.choices,
