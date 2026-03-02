@@ -13,9 +13,15 @@ from rest_framework.views import APIView
 from apps.core.excel_service import export_to_excel, parse_excel_file
 from apps.core.choices import StatusChoices
 from apps.core.pagination import StandardResultsSetPagination
-from .models import Task
-from .serializers import TaskSerializer
+from .models import Task, TaskCategory
+from .serializers import TaskSerializer, TaskCategorySerializer
 from .filters import TaskFilter
+
+@extend_schema(tags=['Task Categories'])
+class TaskCategoryViewSet(viewsets.ModelViewSet):
+    queryset = TaskCategory.objects.all()
+    serializer_class = TaskCategorySerializer
+    pagination_class = None
 
 @extend_schema(tags=['Tasks'])
 class TaskViewSet(viewsets.ModelViewSet):
