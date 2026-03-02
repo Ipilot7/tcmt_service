@@ -10,6 +10,7 @@ class TaskFilter(filters.FilterSet):
         model = Task
         fields = {
             'hospital': ['exact'],
+            'category': ['exact'],
             'device_type': ['exact'],
             'status': ['exact'],
             'responsible_persons': ['exact'],

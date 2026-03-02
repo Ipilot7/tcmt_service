@@ -64,7 +64,7 @@ async def show_task_detail(message: Message):
     user = await sync_to_async(lambda: User.objects.filter(telegram_id=str(message.from_user.id)).first())()
     
     task = await sync_to_async(
-        lambda: Task.objects.filter(id=task_id, responsible_persons=user).select_related('device_type', 'hospital').first()
+        lambda: Task.objects.filter(id=task_id, responsible_persons=user).select_related('device_type', 'hospital', 'category').first()
     )()
 
     if not task:
@@ -77,6 +77,8 @@ async def show_task_detail(message: Message):
     text = (
         f"📋 <b>ЗАДАЧА № {task.task_number}</b>\n"
         "────────────────────\n\n"
+        f"📂 <b>Категория:</b> {task.category.name if task.category else 'Не указана'}\n"
+        f"📞 <b>Телефон:</b> {task.phone_number or 'Не указан'}\n"
         f"👥 <b>Ответственные:</b>\n└ {responsibles}\n\n"
         f"📍 <b>Локация:</b>\n└ {task.hospital.name}\n\n"
         f"🩺 <b>Оборудование:</b>\n└ {task.device_type.name}\n\n"

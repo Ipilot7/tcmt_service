@@ -19,12 +19,12 @@ from .filters import TaskFilter
 
 @extend_schema(tags=['Tasks'])
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.select_related('hospital', 'device_type').prefetch_related('responsible_persons').all()
+    queryset = Task.objects.select_related('hospital', 'device_type', 'category').prefetch_related('responsible_persons').all()
     serializer_class = TaskSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = TaskFilter
-    search_fields = ['task_number', 'description', 'hospital__name']
+    search_fields = ['task_number', 'description', 'hospital__name', 'phone_number']
 
     @extend_schema(
         responses={
@@ -41,11 +41,13 @@ class TaskViewSet(viewsets.ModelViewSet):
         columns = [
             ('ID', 'id'),
             ('Номер задачи', 'task_number'),
+            ('К чему относится', 'category.name'),
             ('ID Больницы', 'hospital_id'),
             ('Больница', 'hospital.name'),
             ('ID Типа оборудования', 'device_type_id'),
             ('Тип оборудования', 'device_type.name'),
             ('Описание', 'description'),
+            ('Телефон', 'phone_number'),
             ('Статус', 'status'),
             ('ID Ответственных', 'responsible_persons_ids'),
             ('Ответственные', 'responsible_persons_names'),
@@ -72,9 +74,11 @@ class TaskViewSet(viewsets.ModelViewSet):
             return Response({"error": "No file uploaded"}, status=400)
 
         column_map = {
+            'К чему относится ID': 'category_id',
             'ID Больницы': 'hospital_id',
             'ID Типа оборудования': 'device_type_id',
             'Описание': 'description',
+            'Телефон': 'phone_number',
             'Статус': 'status',
             'Дата задачи': 'task_date',
         }
