@@ -110,7 +110,6 @@ def notify_managers(title, body, data=None):
     # Use the same logic as IsAdminOrManager permission
     managers = User.objects.filter(
         Q(is_superuser=True) | 
-        Q(is_staff=True) | 
         Q(roles__name__iexact='Manager')
     ).distinct()
 
