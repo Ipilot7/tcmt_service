@@ -15,7 +15,14 @@ class RegistrationStates(StatesGroup):
 
 @router.message(Command("start"))
 async def cmd_start(message: Message, state: FSMContext):
-    user = await sync_to_async(lambda: User.objects.filter(telegram_id=str(message.from_user.id)).first())()
+    # Очищаем состояние при каждом /start, чтобы избежать "зависания" в процессе регистрации
+    await state.clear()
+    
+    if not message.from_user:
+        return
+
+    tg_id = str(message.from_user.id)
+    user = await sync_to_async(lambda: User.objects.filter(telegram_id=tg_id).first())()
     
     if user:
         await message.answer(
@@ -54,15 +61,29 @@ async def process_name(message: Message, state: FSMContext):
 @router.message(RegistrationStates.waiting_for_psn)
 async def process_psn(message: Message, state: FSMContext):
     data = await state.get_data()
-    fullname = data['fullname']
+    fullname = data.get('fullname')
     psn = message.text.strip()
+    tg_id = str(message.from_user.id)
     
+    # Сначала проверяем, не привязан ли уже этот Telegram ID к какому-либо пользователю
+    # (на случай, если пользователь нажал "Зарегистрироваться", уже будучи в базе)
+    existing_user_by_tg = await sync_to_async(lambda: User.objects.filter(telegram_id=tg_id).first())()
+    if existing_user_by_tg:
+        await message.answer(
+            f"✅ <b>Вы уже авторизованы!</b>\n\n"
+            f"Ваш профиль: <b>{existing_user_by_tg.fullname}</b>.",
+            reply_markup=get_main_menu(),
+            parse_mode="HTML"
+        )
+        await state.clear()
+        return
+
     user = await sync_to_async(
         lambda: User.objects.filter(fullname__iexact=fullname, psn=psn).first()
     )()
     
     if user:
-        if user.telegram_id and user.telegram_id != str(message.from_user.id):
+        if user.telegram_id and user.telegram_id != tg_id:
             await message.answer(
                 "❌ Этот аккаунт уже привязан к другому пользователю Telegram. "
                 "Обратитесь к администратору."
@@ -70,7 +91,7 @@ async def process_psn(message: Message, state: FSMContext):
             await state.clear()
             return
         
-        user.telegram_id = str(message.from_user.id)
+        user.telegram_id = tg_id
         await sync_to_async(user.save)()
         await message.answer(
             f"✅ <b>Авторизация успешна!</b>\n\n"
@@ -80,21 +101,29 @@ async def process_psn(message: Message, state: FSMContext):
         )
     else:
         # Автоматическое создание пользователя, если он не найден
-        new_user = await sync_to_async(
-            lambda: User.objects.create(
-                fullname=fullname,
-                psn=psn,
-                login=f"tg_{message.from_user.id}",
-                telegram_id=str(message.from_user.id)
+        try:
+            new_user = await sync_to_async(
+                lambda: User.objects.create(
+                    fullname=fullname,
+                    psn=psn,
+                    login=f"tg_{message.from_user.id}",
+                    telegram_id=tg_id
+                )
+            )()
+            await message.answer(
+                f"🆕 <b>Вы зарегистрированы в системе!</b>\n\n"
+                f"Создан новый профиль: <b>{new_user.fullname}</b>.\n"
+                f"Теперь вы можете полноценно пользоваться ботом.",
+                reply_markup=get_main_menu(),
+                parse_mode="HTML"
             )
-        )()
-        await message.answer(
-            f"🆕 <b>Вы зарегистрированы в системе!</b>\n\n"
-            f"Создан новый профиль: <b>{new_user.fullname}</b>.\n"
-            f"Теперь вы можете полноценно пользоваться ботом.",
-            reply_markup=get_main_menu(),
-            parse_mode="HTML"
-        )
+        except Exception as e:
+            await message.answer(
+                "❌ <b>Произошла ошибка при регистрации.</b>\n\n"
+                "Возможно, данные введены неверно или такой пользователь уже существует. "
+                "Попробуйте еще раз или обратитесь в поддержку.",
+                parse_mode="HTML"
+            )
     
     await state.clear()
 
