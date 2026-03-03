@@ -10,13 +10,23 @@ logger = logging.getLogger(__name__)
 def task_notification_handler(sender, instance, created, **kwargs):
     logger.info(f"--- Task Signal (post_save) [{instance.task_number}] ---")
     
-    # Notify managers about new/updated task
-    title = "🆕 Новая задача" if created else "📢 Обновление задачи"
-    notify_managers(
-        title=title,
-        body=f"Задача {instance.task_number} ({instance.get_status_display()})",
-        data={"type": "manager_info", "task_id": str(instance.id)}
-    )
+    if created:
+        # Notify managers only about NEW tasks
+        notify_managers(
+            title="🆕 Новая задача",
+            body=f"Создана задача {instance.task_number}: {instance.description[:100]}",
+            data={"type": "manager_info", "task_id": str(instance.id)}
+        )
+    else:
+        # Notify ONLY assigned users about status updates
+        users = instance.responsible_persons.all()
+        for user in users:
+            send_push_notification(
+                user=user,
+                title="📢 Обновление задачи",
+                body=f"В задаче {instance.task_number} изменился статус на {instance.get_status_display()}",
+                data={"type": "task_update", "task_id": str(instance.id)}
+            )
 
 @receiver(m2m_changed, sender=Task.responsible_persons.through)
 def task_m2m_notification_handler(sender, instance, action, pk_set, **kwargs):
