@@ -118,6 +118,9 @@ class TaskAnalyticsView(APIView):
     Эндпоинт для получения аналитики по задачам (статистика по аппаратам).
     """
     @extend_schema(
+        parameters=[
+            OpenApiParameter(name='month', description='Месяц для фильтрации в формате YYYY-MM', required=False, type=str),
+        ],
         responses={
             200: inline_serializer(
                 name='TaskAnalyticsResponse',
@@ -131,6 +134,15 @@ class TaskAnalyticsView(APIView):
                                 'label': serializers.CharField(),
                                 'count': serializers.IntegerField(),
                                 'color': serializers.CharField(),
+                                'categories': serializers.ListField(
+                                    child=inline_serializer(
+                                        name='CategoryBreakdown',
+                                        fields={
+                                            'label': serializers.CharField(),
+                                            'count': serializers.IntegerField(),
+                                        }
+                                    )
+                                )
                             }
                         )
                     ),
@@ -148,10 +160,37 @@ class TaskAnalyticsView(APIView):
         }
     )
     def get(self, request):
-        # Агрегация данных по типам оборудования (аппаратам)
-        counts = Task.objects.values('device_type__id', 'device_type__name').annotate(count=Count('id')).order_by('-count')
+        month_str = request.query_params.get('month')
         
-        total = Task.objects.count()
+        filter_kwargs = {}
+        if month_str:
+            try:
+                year_val, month_val = map(int, month_str.split('-'))
+                filter_kwargs['created_at__year'] = year_val
+                filter_kwargs['created_at__month'] = month_val
+            except (ValueError, TypeError, IndexError):
+                pass
+
+        # Агрегация данных по типам оборудования (аппаратам)
+        counts = Task.objects.filter(**filter_kwargs).values('device_type__id', 'device_type__name').annotate(count=Count('id')).order_by('-count')
+        
+        total = Task.objects.filter(**filter_kwargs).count()
+
+        # Агрегация по категориям для каждого аппарата
+        category_counts = Task.objects.filter(**filter_kwargs).values(
+            'device_type__id', 'category__name'
+        ).annotate(cat_count=Count('id'))
+
+        cat_map = {}
+        for item in category_counts:
+            dt_id = item['device_type__id']
+            cat_name = item['category__name'] or "Не указано"
+            if dt_id not in cat_map:
+                cat_map[dt_id] = []
+            cat_map[dt_id].append({
+                'label': cat_name,
+                'count': item['cat_count']
+            })
         
         # Цвета для графиков
         preset_colors = [
@@ -169,14 +208,16 @@ class TaskAnalyticsView(APIView):
 
         breakdown = []
         for i, item in enumerate(counts):
+            dt_id = item['device_type__id']
             breakdown.append({
-                'id': str(item['device_type__id']),
+                'id': str(dt_id),
                 'label': item['device_type__name'],
                 'count': item['count'],
-                'color': preset_colors[i % len(preset_colors)]
+                'color': preset_colors[i % len(preset_colors)],
+                'categories': cat_map.get(dt_id, [])
             })
 
-        # Yearly report (last 12 months)
+        # Yearly report (last 12 months) remains global or relative to current date
         from django.utils import timezone
         import datetime
         
@@ -210,10 +251,10 @@ class TaskAnalyticsView(APIView):
         }
         
         yearly_report = []
-        for month_str in months_list:
+        for month_str_item in months_list:
             yearly_report.append({
-                'month': month_str,
-                'count': yearly_counts_dict.get(month_str, 0)
+                'month': month_str_item,
+                'count': yearly_counts_dict.get(month_str_item, 0)
             })
 
         return Response({
