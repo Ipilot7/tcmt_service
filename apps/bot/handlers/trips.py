@@ -96,7 +96,16 @@ async def change_trip_status(callback: CallbackQuery):
         trip.status = new_status
         await sync_to_async(trip.save)()
         await callback.answer("🔄 Статус обновлен!")
-        await callback.message.edit_reply_markup(reply_markup=get_trip_actions_kb(trip.id, trip.status))
+        
+        # Обновляем сообщение: берем всё до иконки статуса и добавляем новый статус
+        base_text = callback.message.text.split("🚦")[0]
+        new_text = base_text + f"🚦 <b>Текущий статус:</b> <u>{trip.get_status_display()}</u>"
+        
+        await callback.message.edit_text(
+            new_text,
+            parse_mode="HTML",
+            reply_markup=get_trip_actions_kb(trip.id, trip.status)
+        )
     else:
         await callback.answer("❌ Ошибка!")
 
@@ -120,11 +129,17 @@ async def process_trip_report(message: Message, state: FSMContext):
     
     trip = await sync_to_async(lambda: Trip.objects.filter(id=trip_id).first())()
     if trip:
-        # Для Trip используем TripResult
+        # Сохраняем в TripResult (для истории)
         await sync_to_async(
             lambda: TripResult.objects.update_or_create(trip=trip, defaults={'result_info': report})
         )()
         
+        # Добавляем отчет в основное описание, чтобы его было видно в системе (как в Tasks)
+        if trip.description:
+            trip.description += f"\n\n--- ОТЧЕТ ---\n{report}"
+        else:
+            trip.description = f"--- ОТЧЕТ ---\n{report}"
+            
         trip.status = StatusChoices.COMPLETED
         await sync_to_async(trip.save)()
         

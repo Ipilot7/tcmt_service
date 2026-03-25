@@ -99,12 +99,12 @@ async def change_task_status(callback: CallbackQuery):
         await sync_to_async(task.save)()
         
         await callback.answer("🔄 Статус обновлен!")
-        # Обновляем сообщение (лучше полностью переотправить или отредактировать)
-        # Для простоты - отредактируем кнопки
-        await callback.message.edit_reply_markup(reply_markup=get_task_actions_kb(task.id, task.status))
+        # Обновляем сообщение: берем всё до иконки статуса и добавляем новый статус
+        base_text = callback.message.text.split("🚦")[0]
+        new_text = base_text + f"🚦 <b>Текущий статус:</b> <u>{task.get_status_display()}</u>"
+        
         await callback.message.edit_text(
-            callback.message.text.split("🚦")[0] + f"🚦 <b>Текущий статус:</b> {task.get_status_display()}\n" + 
-            callback.message.text.split("📅")[1] if "📅" in callback.message.text else "",
+            new_text,
             parse_mode="HTML",
             reply_markup=get_task_actions_kb(task.id, task.status)
         )
