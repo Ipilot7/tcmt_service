@@ -23,11 +23,11 @@ class TaskSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(HospitalSerializer)
     def get_hospital(self, obj):
-        return HospitalSerializer(obj.hospital).data
+        return HospitalSerializer(obj.hospital).data if obj.hospital else None
 
     @extend_schema_field(DeviceTypeSerializer)
     def get_device_type(self, obj):
-        return DeviceTypeSerializer(obj.device_type).data
+        return DeviceTypeSerializer(obj.device_type).data if obj.device_type else None
 
     @extend_schema_field(serializers.ListField(child=serializers.DictField()))
     def get_responsible_persons(self, obj):

@@ -5,11 +5,11 @@ from apps.accounts.models import User
 from apps.core.choices import StatusChoices
 
 class Trip(models.Model):
-    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='trips')
-    device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE, related_name='trips')
+    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='trips', null=True, blank=True)
+    device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE, related_name='trips', null=True, blank=True)
     task_number = models.CharField(max_length=255, db_index=True, blank=True)
     description = models.TextField()
-    contact_phone = models.CharField(max_length=20)
+    contact_phone = models.CharField(max_length=20, null=True, blank=True)
     trip_date = models.DateField(null=True, blank=True)
     order_number = models.CharField(max_length=255, null=True, blank=True)
     status = models.CharField(
