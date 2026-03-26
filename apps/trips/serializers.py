@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_field
 from .models import Trip, TripResult
-from apps.locations.serializers import HospitalSerializer
+from apps.locations.serializers import HospitalSerializer, RegionSerializer
 from apps.devices.serializers import DeviceTypeSerializer
 from apps.accounts.serializers import UserSerializer
 
@@ -11,7 +11,7 @@ class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
         fields = [
-            'id', 'hospital', 'device_type', 'task_number', 'description', 
+            'id', 'region', 'hospital', 'device_type', 'task_number', 'description', 
             'contact_phone', 'trip_date', 'order_number', 'status', 
             'status_display', 'responsible_persons', 'created_at'
         ]
@@ -34,6 +34,7 @@ class TripSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+        representation['region'] = RegionSerializer(instance.region).data if instance.region else None
         representation['hospital'] = self.get_hospital(instance)
         representation['device_type'] = self.get_device_type(instance)
         representation['responsible_persons'] = self.get_responsible_persons(instance)

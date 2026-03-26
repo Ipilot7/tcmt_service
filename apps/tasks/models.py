@@ -1,5 +1,5 @@
 from django.db import models
-from apps.locations.models import Hospital
+from apps.locations.models import Hospital, Region
 from apps.devices.models import DeviceType
 from apps.accounts.models import User
 from apps.core.choices import StatusChoices
@@ -15,6 +15,7 @@ class TaskCategory(models.Model):
         return self.name
 
 class Task(models.Model):
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True, related_name='tasks')
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='tasks', null=True, blank=True)
     category = models.ForeignKey(TaskCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='tasks', verbose_name="К чему относится")
     device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE, related_name='tasks', null=True, blank=True)
