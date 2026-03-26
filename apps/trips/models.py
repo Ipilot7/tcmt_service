@@ -1,10 +1,11 @@
 from django.db import models
-from apps.locations.models import Hospital
+from apps.locations.models import Hospital, Region
 from apps.devices.models import DeviceType
 from apps.accounts.models import User
 from apps.core.choices import StatusChoices
 
 class Trip(models.Model):
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True, related_name='trips')
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='trips', null=True, blank=True)
     device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE, related_name='trips', null=True, blank=True)
     task_number = models.CharField(max_length=255, db_index=True, blank=True)

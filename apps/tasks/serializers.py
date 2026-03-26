@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_field
 from .models import Task, TaskCategory
-from apps.locations.serializers import HospitalSerializer
+from apps.locations.serializers import HospitalSerializer, RegionSerializer
 from apps.devices.serializers import DeviceTypeSerializer
 
 class TaskCategorySerializer(serializers.ModelSerializer):
@@ -15,7 +15,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = [
-            'id', 'hospital', 'category', 'device_type', 'task_number', 
+            'id', 'region', 'hospital', 'category', 'device_type', 'task_number', 
             'description', 'phone_number', 'status', 'status_display', 
             'responsible_persons', 'task_date', 'created_at'
         ]
@@ -38,6 +38,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+        representation['region'] = RegionSerializer(instance.region).data if instance.region else None
         representation['hospital'] = self.get_hospital(instance)
         representation['device_type'] = self.get_device_type(instance)
         representation['category'] = TaskCategorySerializer(instance.category).data if instance.category else None
