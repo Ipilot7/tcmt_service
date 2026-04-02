@@ -3,6 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from asgiref.sync import sync_to_async
+from django.utils import timezone
 
 from apps.accounts.models import User
 from apps.bot.keyboards.main import get_main_menu
@@ -14,6 +15,12 @@ router = Router()
 
 class TaskStates(StatesGroup):
     waiting_for_report = State()
+
+
+def build_task_report(report: str, target_status: str) -> str:
+    report_label = "ПРИЧИНА УДЕРЖАНИЯ" if target_status == StatusChoices.ON_HOLD else "ОТЧЕТ"
+    report_time = timezone.localtime().strftime("%d.%m.%Y %H:%M")
+    return f"--- {report_label} ---\nВремя отчета: {report_time}\n{report}"
 
 
 def get_task_device_type_name(task: Task) -> str:
@@ -107,8 +114,18 @@ async def show_task_detail(message: Message):
 
 
 @router.callback_query(F.data.startswith("task_status:"))
-async def change_task_status(callback: CallbackQuery):
+async def change_task_status(callback: CallbackQuery, state: FSMContext):
     _, task_id, new_status = callback.data.split(":")
+
+    if new_status == StatusChoices.ON_HOLD:
+        await state.set_state(TaskStates.waiting_for_report)
+        await state.update_data(task_id=task_id, target_status=new_status)
+        await callback.message.answer(
+            "📝 Пожалуйста, напишите <b>причину перевода заявки на удержание</b>: ",
+            parse_mode="HTML",
+        )
+        await callback.answer()
+        return
 
     task = await sync_to_async(lambda: Task.objects.filter(id=task_id).first())()
     if task:
@@ -132,7 +149,7 @@ async def change_task_status(callback: CallbackQuery):
 async def start_task_completion(callback: CallbackQuery, state: FSMContext):
     task_id = callback.data.split(":")[1]
     await state.set_state(TaskStates.waiting_for_report)
-    await state.update_data(task_id=task_id)
+    await state.update_data(task_id=task_id, target_status=StatusChoices.COMPLETED)
 
     await callback.message.answer(
         "📝 Пожалуйста, напишите краткий <b>отчет о проделанной работе</b> для закрытия заявки:",
@@ -145,19 +162,32 @@ async def start_task_completion(callback: CallbackQuery, state: FSMContext):
 async def process_task_report(message: Message, state: FSMContext):
     data = await state.get_data()
     task_id = data["task_id"]
+    target_status = data.get("target_status", StatusChoices.COMPLETED)
     report = message.text.strip()
 
     task = await sync_to_async(lambda: Task.objects.filter(id=task_id).first())()
     if task:
-        task.description += f"\n\n--- ОТЧЕТ ---\n{report}"
-        task.status = StatusChoices.COMPLETED
+        report_entry = build_task_report(report, target_status)
+        if task.description:
+            task.description += f"\n\n{report_entry}"
+        else:
+            task.description = report_entry
+
+        task.status = target_status
         await sync_to_async(task.save)()
 
-        await message.answer(
-            f"✅ <b>Задача {task.task_number} успешно завершена!</b>\nОтчет сохранен.",
-            reply_markup=get_main_menu(),
-            parse_mode="HTML",
-        )
+        if target_status == StatusChoices.ON_HOLD:
+            response_text = (
+                f"⏸ <b>Задача {task.task_number} переведена на удержание.</b>\n"
+                "Причина сохранена."
+            )
+        else:
+            response_text = (
+                f"✅ <b>Задача {task.task_number} успешно завершена!</b>\n"
+                "Отчет сохранен."
+            )
+
+        await message.answer(response_text, reply_markup=get_main_menu(), parse_mode="HTML")
     else:
         await message.answer("❌ Ошибка: задача не найдена.")
 

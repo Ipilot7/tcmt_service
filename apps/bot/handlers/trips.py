@@ -3,6 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from asgiref.sync import sync_to_async
+from django.utils import timezone
 
 from apps.accounts.models import User
 from apps.bot.keyboards.main import get_main_menu
@@ -14,6 +15,12 @@ router = Router()
 
 class TripStates(StatesGroup):
     waiting_for_report = State()
+
+
+def build_trip_report(report: str, target_status: str) -> str:
+    report_label = "ПРИЧИНА УДЕРЖАНИЯ" if target_status == StatusChoices.ON_HOLD else "ОТЧЕТ"
+    report_time = timezone.localtime().strftime("%d.%m.%Y %H:%M")
+    return f"--- {report_label} ---\nВремя отчета: {report_time}\n{report}"
 
 
 def get_trip_device_type_name(trip: Trip) -> str:
@@ -106,8 +113,18 @@ async def show_trip_detail(message: Message):
 
 
 @router.callback_query(F.data.startswith("trip_status:"))
-async def change_trip_status(callback: CallbackQuery):
+async def change_trip_status(callback: CallbackQuery, state: FSMContext):
     _, trip_id, new_status = callback.data.split(":")
+
+    if new_status == StatusChoices.ON_HOLD:
+        await state.set_state(TripStates.waiting_for_report)
+        await state.update_data(trip_id=trip_id, target_status=new_status)
+        await callback.message.answer(
+            "📝 Пожалуйста, напишите <b>причину перевода поездки на удержание</b>: ",
+            parse_mode="HTML",
+        )
+        await callback.answer()
+        return
 
     trip = await sync_to_async(lambda: Trip.objects.filter(id=trip_id).first())()
     if trip:
@@ -131,7 +148,7 @@ async def change_trip_status(callback: CallbackQuery):
 async def start_trip_completion(callback: CallbackQuery, state: FSMContext):
     trip_id = callback.data.split(":")[1]
     await state.set_state(TripStates.waiting_for_report)
-    await state.update_data(trip_id=trip_id)
+    await state.update_data(trip_id=trip_id, target_status=StatusChoices.COMPLETED)
 
     await callback.message.answer(
         "📝 Пожалуйста, напишите краткий <b>отчет о проделанной работе</b> для завершения поездки:",
@@ -144,25 +161,38 @@ async def start_trip_completion(callback: CallbackQuery, state: FSMContext):
 async def process_trip_report(message: Message, state: FSMContext):
     data = await state.get_data()
     trip_id = data["trip_id"]
+    target_status = data.get("target_status", StatusChoices.COMPLETED)
     report = message.text.strip()
 
     trip = await sync_to_async(lambda: Trip.objects.filter(id=trip_id).first())()
     if trip:
-        await sync_to_async(lambda: TripResult.objects.update_or_create(trip=trip, defaults={"result_info": report}))()
+        report_entry = build_trip_report(report, target_status)
+
+        if target_status == StatusChoices.COMPLETED:
+            await sync_to_async(
+                lambda: TripResult.objects.update_or_create(trip=trip, defaults={"result_info": report_entry})
+            )()
 
         if trip.description:
-            trip.description += f"\n\n--- ОТЧЕТ ---\n{report}"
+            trip.description += f"\n\n{report_entry}"
         else:
-            trip.description = f"--- ОТЧЕТ ---\n{report}"
+            trip.description = report_entry
 
-        trip.status = StatusChoices.COMPLETED
+        trip.status = target_status
         await sync_to_async(trip.save)()
 
-        await message.answer(
-            f"✅ <b>Поездка {trip.task_number} успешно завершена!</b>\nОтчет сохранен.",
-            reply_markup=get_main_menu(),
-            parse_mode="HTML",
-        )
+        if target_status == StatusChoices.ON_HOLD:
+            response_text = (
+                f"⏸ <b>Поездка {trip.task_number} переведена на удержание.</b>\n"
+                "Причина сохранена."
+            )
+        else:
+            response_text = (
+                f"✅ <b>Поездка {trip.task_number} успешно завершена!</b>\n"
+                "Отчет сохранен."
+            )
+
+        await message.answer(response_text, reply_markup=get_main_menu(), parse_mode="HTML")
     else:
         await message.answer("❌ Ошибка: поездка не найдена.")
 
