@@ -166,9 +166,11 @@ class TripAnalyticsView(APIView):
 
         breakdown = []
         for i, item in enumerate(counts):
+            dt_id = item['device_type__id']
+            label = item['device_type__name'] or "Не указано"
             breakdown.append({
-                'id': str(item['device_type__id']),
-                'label': item['device_type__name'],
+                'id': str(dt_id),
+                'label': label,
                 'count': item['count'],
                 'color': preset_colors[i % len(preset_colors)]
             })
