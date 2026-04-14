@@ -3,6 +3,7 @@ from .models import Device
 
 class DeviceFilter(filters.FilterSet):
     serial_number = filters.CharFilter(lookup_expr='icontains')
+    region = filters.NumberFilter(field_name='hospital__region')
 
     class Meta:
         model = Device
