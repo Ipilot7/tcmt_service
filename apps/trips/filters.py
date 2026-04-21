@@ -7,6 +7,8 @@ class TripFilter(filters.FilterSet):
     task_number = filters.CharFilter(lookup_expr='icontains')
     order_number = filters.CharFilter(lookup_expr='icontains')
 
+    region = filters.NumberFilter(field_name='hospital__region')
+    
     class Meta:
         model = Trip
         fields = {

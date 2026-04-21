@@ -115,6 +115,10 @@ class TripAnalyticsView(APIView):
     Эндпоинт для получения аналитики по поездкам (статистика по аппаратам).
     """
     @extend_schema(
+        parameters=[
+            OpenApiParameter(name='month', description='Месяц для фильтрации в формате YYYY-MM', required=False, type=str),
+            OpenApiParameter(name='region', description='ID региона для фильтрации', required=False, type=int),
+        ],
         responses={
             200: inline_serializer(
                 name='TripAnalyticsResponse',
@@ -145,10 +149,25 @@ class TripAnalyticsView(APIView):
         }
     )
     def get(self, request):
-        # Агрегация данных по типам оборудования (аппаратам)
-        counts = Trip.objects.values('device_type__id', 'device_type__name').annotate(count=Count('id')).order_by('-count')
+        month_str = request.query_params.get('month')
+        region_id = request.query_params.get('region')
         
-        total = Trip.objects.count()
+        filter_kwargs = {}
+        if month_str:
+            try:
+                year_val, month_val = map(int, month_str.split('-'))
+                filter_kwargs['created_at__year'] = year_val
+                filter_kwargs['created_at__month'] = month_val
+            except (ValueError, TypeError, IndexError):
+                pass
+        
+        if region_id:
+            filter_kwargs['hospital__region_id'] = region_id
+
+        # Агрегация данных по типам оборудования (аппаратам)
+        counts = Trip.objects.filter(**filter_kwargs).values('device_type__id', 'device_type__name').annotate(count=Count('id')).order_by('-count')
+        
+        total = Trip.objects.filter(**filter_kwargs).count()
         
         # Цвета для графиков
         preset_colors = [
@@ -197,8 +216,13 @@ class TripAnalyticsView(APIView):
         start_year, start_month = map(int, oldest_month_str.split('-'))
         start_date = datetime.date(start_year, start_month, 1)
         
+        # We don't filter yearly report by month (obviously), but should we filter it by region?
+        yearly_filter = {'created_at__gte': start_date}
+        if region_id:
+            yearly_filter['hospital__region_id'] = region_id
+
         yearly_counts = Trip.objects.filter(
-            created_at__gte=start_date
+            **yearly_filter
         ).annotate(
             month_trunc=TruncMonth('created_at')
         ).values('month_trunc').annotate(count=Count('id')).order_by('month_trunc')
@@ -209,10 +233,10 @@ class TripAnalyticsView(APIView):
         }
         
         yearly_report = []
-        for month_str in months_list:
+        for m_str in months_list:
             yearly_report.append({
-                'month': month_str,
-                'count': yearly_counts_dict.get(month_str, 0)
+                'month': m_str,
+                'count': yearly_counts_dict.get(m_str, 0)
             })
 
         return Response({
