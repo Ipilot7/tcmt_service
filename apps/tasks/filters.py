@@ -6,6 +6,8 @@ class TaskFilter(filters.FilterSet):
     created_at = filters.DateFromToRangeFilter()
     task_number = filters.CharFilter(lookup_expr='icontains')
 
+    region = filters.NumberFilter(field_name='hospital__region')
+    
     class Meta:
         model = Task
         fields = {
