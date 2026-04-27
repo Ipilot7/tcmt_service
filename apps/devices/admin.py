@@ -3,7 +3,7 @@ from .models import DeviceType, Device
 
 @admin.register(DeviceType)
 class DeviceTypeAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'image')
     search_fields = ('name',)
 
 @admin.register(Device)

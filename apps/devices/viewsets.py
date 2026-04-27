@@ -11,10 +11,13 @@ from .models import DeviceType, Device
 from .serializers import DeviceTypeSerializer, DeviceSerializer
 from .filters import DeviceFilter
 
+from rest_framework.parsers import MultiPartParser, FormParser
+
 @extend_schema(tags=['Devices'])
 class DeviceTypeViewSet(viewsets.ModelViewSet):
     queryset = DeviceType.objects.all()
     serializer_class = DeviceTypeSerializer
+    parser_classes = [MultiPartParser, FormParser]
 
 @extend_schema(tags=['Devices'])
 class DeviceViewSet(viewsets.ModelViewSet):
