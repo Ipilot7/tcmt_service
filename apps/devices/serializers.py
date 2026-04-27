@@ -5,7 +5,7 @@ from apps.locations.serializers import HospitalSerializer
 class DeviceTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeviceType
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'image']
 
 class DeviceSerializer(serializers.ModelSerializer):
     device_type_info = DeviceTypeSerializer(source='device_type', read_only=True)

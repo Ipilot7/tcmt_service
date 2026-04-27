@@ -3,6 +3,7 @@ from apps.locations.models import Hospital
 
 class DeviceType(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    image = models.ImageField(upload_to='device_types/', null=True, blank=True)
 
     class Meta:
         db_table = 'device_types'
