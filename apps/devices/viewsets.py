@@ -30,6 +30,22 @@ class DeviceViewSet(viewsets.ModelViewSet):
         if self.request.query_params.get('page') is None:
             return None
         return super().paginate_queryset(queryset)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            'count': queryset.count(),
+            'next': None,
+            'previous': None,
+            'results': serializer.data
+        })
     filterset_class = DeviceFilter
     search_fields = ['serial_number', 'device_type__name', 'hospital__name']
 
