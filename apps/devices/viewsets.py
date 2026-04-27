@@ -25,6 +25,11 @@ class DeviceViewSet(viewsets.ModelViewSet):
     serializer_class = DeviceSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+
+    def paginate_queryset(self, queryset):
+        if self.request.query_params.get('page') is None:
+            return None
+        return super().paginate_queryset(queryset)
     filterset_class = DeviceFilter
     search_fields = ['serial_number', 'device_type__name', 'hospital__name']
 
