@@ -24,7 +24,8 @@ class DeviceConsumer(AsyncWebsocketConsumer):
         # Обновляем статус в БД
         await self.set_device_online_status(self.device, True)
 
-        self.room_group_name = f'device_{self.serial_number}'
+        # Используем ID устройства для имени группы, так как серийный номер может содержать кириллицу или "/"
+        self.room_group_name = f'device_{self.device.id}'
 
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -93,9 +94,19 @@ class DeviceConsumer(AsyncWebsocketConsumer):
         payload = data.get('data', {})
 
         if action == 'status':
-            # Пересылаем статус всем, кто слушает это устройство (например, фронтенду)
+            # Пересылаем статус всем, кто слушает это устройство (страница устройства)
             await self.channel_layer.group_send(
                 self.room_group_name,
+                {
+                    'type': 'device_data_update',
+                    'serial_number': self.serial_number,
+                    'data': payload
+                }
+            )
+            
+            # Также пересылаем статус на общую карту
+            await self.channel_layer.group_send(
+                'map_updates',
                 {
                     'type': 'device_data_update',
                     'serial_number': self.serial_number,
@@ -112,10 +123,10 @@ class DeviceConsumer(AsyncWebsocketConsumer):
         }))
 
     async def device_data_update(self, event):
+        # Отправляем во Flutter только серийный номер и статус
         await self.send(text_data=json.dumps({
-            'event': 'data_update',
             'serial_number': event['serial_number'],
-            'data': event['data']
+            'status': event['data'].get('status', 'online')
         }))
 
     async def map_status_update(self, event):
@@ -136,6 +147,3 @@ class DeviceConsumer(AsyncWebsocketConsumer):
     def set_device_online_status(self, device, is_online):
         device.is_online = is_online
         device.save(update_fields=['is_online'])
-
-
-

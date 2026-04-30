@@ -1,45 +1,33 @@
-param(
-    [string]$SerialNumber = "SN-12345",
-    [string]$HostUrl = "ws://localhost:8000"
-)
+$ConfigPath = "$PSScriptRoot\device_config.txt"
+if (Test-Path $ConfigPath) {
+    $Config = Get-Content $ConfigPath -Encoding UTF8 | ConvertFrom-StringData
+    $SerialNumber = $Config.SERIAL_NUMBER
+    $HostUrl = $Config.SERVER_URL
+} else {
+    $SerialNumber = "UNKNOWN_DEVICE"; $HostUrl = "ws://127.0.0.1:8000"
+}
 
-$wsUri = "$HostUrl/ws/devices/$SerialNumber/status/"
-Write-Host "Initialising connection to $wsUri" -ForegroundColor Cyan
+$Bytes = [System.Text.Encoding]::UTF8.GetBytes($SerialNumber)
+$EncodedSerial = ""; foreach ($Byte in $Bytes) { $EncodedSerial += "%{0:X2}" -f $Byte }
+$wsUri = "$HostUrl/ws/devices/$EncodedSerial/status/"
 
 $ws = New-Object System.Net.WebSockets.ClientWebSocket
 $cts = New-Object System.Threading.CancellationTokenSource
 
 try {
-    $task = $ws.ConnectAsync([Uri]$wsUri, $cts.Token)
-    $task.Wait()
-} catch {
-    Write-Host "Failed to connect to server. Error: $($_.Exception.InnerException.Message)" -ForegroundColor Red
-    exit
-}
-
-if ($ws.State -eq 'Open') {
-    Write-Host "Connected successfully! Press Ctrl+C to stop." -ForegroundColor Green
+    $ws.ConnectAsync([Uri]$wsUri, $cts.Token).Wait()
+    Write-Host "Connected: $SerialNumber" -ForegroundColor Green
     
-    try {
-        while ($ws.State -eq 'Open') {
-            # Формируем JSON статус
-            $json = '{"action": "status", "data": {"is_working": true, "temperature": 45, "error_code": null}}'
-            $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
-            $segment = New-Object System.ArraySegment[byte] -ArgumentList @(,$bytes)
-            
-            # Отправляем в сокет
-            $sendTask = $ws.SendAsync($segment, [System.Net.WebSockets.WebSocketMessageType]::Text, $true, $cts.Token)
-            $sendTask.Wait()
-            
-            $time = Get-Date -Format "HH:mm:ss"
-            Write-Host "[$time] Sent: $json" -ForegroundColor Yellow
-            
-            # Ждем 5 секунд перед следующей отправкой
-            Start-Sleep -Seconds 5
-        }
-    } catch {
-        Write-Host "Connection lost..." -ForegroundColor Red
+    while ($ws.State -eq 'Open') {
+        # Отправляем только статус
+        $payload = @{ action = "status"; data = @{ status = "Online" } }
+        $json = $payload | ConvertTo-Json -Compress
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
+        $ws.SendAsync((New-Object System.ArraySegment[byte] -ArgumentList @(,$bytes)), [System.Net.WebSockets.WebSocketMessageType]::Text, $true, $cts.Token).Wait()
+        
+        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Status sent"
+        Start-Sleep -Seconds 10
     }
-} else {
-    Write-Host "Failed to open connection. State: $($ws.State)" -ForegroundColor Red
+} catch {
+    Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
 }
