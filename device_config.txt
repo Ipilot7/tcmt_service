@@ -1,2 +1,2 @@
-SERIAL_NUMBER=МРЛМТУ-1/24
-SERVER_URL=ws://127.0.0.1:8000
+SERIAL_NUMBER=МРЛМТУ-7/24
+SERVER_URL=wss://service.deepfocus.uz
