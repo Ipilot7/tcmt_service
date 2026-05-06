@@ -1,2 +1,0 @@
-SERIAL_NUMBER=МРЛМТУ-7/24
-SERVER_URL=wss://service.deepfocus.uz

@@ -16,7 +16,7 @@ class TaskCategory(models.Model):
 
 class Task(models.Model):
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True, related_name='tasks')
-    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='tasks', null=True, blank=True)
+    hospital = models.ForeignKey(Hospital, on_delete=models.SET_NULL, related_name='tasks', null=True, blank=True)
     category = models.ForeignKey(TaskCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='tasks', verbose_name="К чему относится")
     device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE, related_name='tasks', null=True, blank=True)
     task_number = models.CharField(max_length=255, unique=True, blank=True)
