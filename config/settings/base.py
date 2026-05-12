@@ -115,8 +115,11 @@ ASGI_APPLICATION = 'config.asgi.application'
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [env('CELERY_BROKER_URL', default='redis://localhost:6379/0')],
+        },
+    },
 }
 
 # Password validation
