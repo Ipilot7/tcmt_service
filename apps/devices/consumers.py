@@ -129,6 +129,14 @@ class DeviceConsumer(AsyncWebsocketConsumer):
             'status': event['data'].get('status', 'online')
         }))
 
+    # Новый обработчик для отправки команд на устройство
+    async def device_command(self, event):
+        # Этот метод вызывается, когда мы отправляем сообщение в группу устройства
+        # через channel_layer.group_send(group_name, {"type": "device_command", "command": "..."})
+        await self.send(text_data=json.dumps({
+            'command': event['command']
+        }))
+
     async def map_status_update(self, event):
         await self.send(text_data=json.dumps({
             'event': 'status_change',
