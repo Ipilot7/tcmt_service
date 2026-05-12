@@ -10,16 +10,14 @@ else {
     $HostUrl = "ws://127.0.0.1:8000"
 }
 
-$Bytes = [System.Text.Encoding]::UTF8.GetBytes($SerialNumber)
-$EncodedSerial = ""
-foreach ($Byte in $Bytes) { 
-    $EncodedSerial += "%{0:X2}" -f $Byte 
-}
+# Улучшенное кодирование серийного номера для поддержки кириллицы и спецсимволов
+$EncodedSerial = [uri]::EscapeDataString($SerialNumber)
 $wsUri = "$HostUrl/ws/devices/$EncodedSerial/status/"
 
 Write-Host "--- Equipment Status Agent Started (v2.0) ---" -ForegroundColor Cyan
 Write-Host "Device: $SerialNumber"
 Write-Host "Target: $HostUrl"
+Write-Host "Full WS URI: $wsUri" -ForegroundColor DarkGray
 
 while ($true) {
     $ws = New-Object System.Net.WebSockets.ClientWebSocket
@@ -47,6 +45,7 @@ while ($true) {
                         }
                         
                         $jsonText = [System.Text.Encoding]::UTF8.GetString($buffer, 0, $result.Count)
+                        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Message received: $jsonText" -ForegroundColor Gray
                         $data = $jsonText | ConvertFrom-Json
                         
                         if ($data.command) {
