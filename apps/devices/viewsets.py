@@ -68,6 +68,44 @@ class DeviceViewSet(viewsets.ModelViewSet):
         ]
         return Response(data)
 
+    @extend_schema(
+        summary="Send remote command to device",
+        request=inline_serializer(
+            name='DeviceCommandRequest',
+            fields={
+                'command': serializers.ChoiceField(choices=['shutdown', 'reset_network'])
+            }
+        ),
+        responses={200: inline_serializer(name='DeviceCommandResponse', fields={'status': serializers.CharField()})}
+    )
+    @action(detail=True, methods=['post'])
+    def command(self, request, pk=None):
+        """
+        Sends a remote command to the device via WebSocket.
+        Available commands: shutdown, reset_network
+        """
+        device = self.get_object()
+        command = request.data.get('command')
+        
+        if command not in ['shutdown', 'reset_network']:
+            return Response({'error': 'Invalid command. Use "shutdown" or "reset_network"'}, status=400)
+            
+        from channels.layers import get_channel_layer
+        from asgiref.sync import async_to_sync
+        
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'device_{device.id}',
+            {
+                'type': 'device_command',
+                'command': command
+            }
+        )
+        
+        return Response({
+            'status': f'Command "{command}" sent to device {device.serial_number} (ID: {device.id})'
+        })
+
 @extend_schema(tags=['Devices'])
 class DeviceAnalyticsView(APIView):
     """
