@@ -39,7 +39,8 @@ class DeviceConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'device_status_update',
                 'status': 'online',
-                'serial_number': self.serial_number
+                'serial_number': self.serial_number,
+                'device_id': self.device.id
             }
         )
 
@@ -119,7 +120,8 @@ class DeviceConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'event': 'status_change',
             'serial_number': event['serial_number'],
-            'status': event['status']
+            'status': event['status'],
+            'device_id': event.get('device_id')
         }))
 
     async def device_data_update(self, event):
