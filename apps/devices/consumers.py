@@ -133,6 +133,7 @@ class DeviceConsumer(AsyncWebsocketConsumer):
 
     # Новый обработчик для отправки команд на устройство
     async def device_command(self, event):
+        print(f"DEBUG: Consumer received command '{event['command']}' for serial {self.serial_number}")
         # Этот метод вызывается, когда мы отправляем сообщение в группу устройства
         # через channel_layer.group_send(group_name, {"type": "device_command", "command": "..."})
         await self.send(text_data=json.dumps({
