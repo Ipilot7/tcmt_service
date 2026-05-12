@@ -1,0 +1,16 @@
+# 1. Удаляем старую задачу
+Unregister-ScheduledTask -TaskName "StartAgent" -Confirm:$false -ErrorAction SilentlyContinue
+
+# 2. Создаем действие: запускаем powershell в скрытом режиме
+# -WindowStyle Hidden скроет окно самого PowerShell
+$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File C:\ss\device_agent.ps1"
+
+# 3. Триггер при входе в систему
+$trigger = New-ScheduledTaskTrigger -AtLogOn
+
+# 4. Настройки: убираем ограничение в 3 дня и разрешаем работу от батареи
+$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit 0
+
+# 5. Регистрация от имени SYSTEM (сделает процесс полностью невидимым в сессии пользователя)
+# ВАЖНО: Если агенту TCMT нужен доступ к интерфейсу Diarm AW, запускайте от текущего пользователя
+Register-ScheduledTask -TaskName "StartAgent" -Action $action -Trigger $trigger -Settings $settings -RunLevel Highest -Force
