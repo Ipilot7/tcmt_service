@@ -94,8 +94,11 @@ class DeviceViewSet(viewsets.ModelViewSet):
         from asgiref.sync import async_to_sync
         
         channel_layer = get_channel_layer()
+        group_name = f'device_{device.id}'
+        print(f"DEBUG: API sending command '{command}' to group '{group_name}'")
+        
         async_to_sync(channel_layer.group_send)(
-            f'device_{device.id}',
+            group_name,
             {
                 'type': 'device_command',
                 'command': command
